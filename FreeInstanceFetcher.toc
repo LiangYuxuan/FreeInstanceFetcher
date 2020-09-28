@@ -1,0 +1,7 @@
+## Interface: 80300
+## Title: |cff1572cfFree Instance Fetcher|r
+## Title-zhCN: |cff1572cf便利CD获取|r
+## Author: Rhythm
+## Version: v8.3.2
+
+FreeInstanceFetcher.lua
