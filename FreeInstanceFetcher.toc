@@ -2,6 +2,6 @@
 ## Title: |cff1572cfFree Instance Fetcher|r
 ## Title-zhCN: |cff1572cf便利CD获取|r
 ## Author: Rhythm
-## Version: v9.0.1
+## Version: v9.0.2
 
 FreeInstanceFetcher.lua

@@ -152,3 +152,38 @@ for index, data in ipairs(buttons) do
 
     tinsert(subFrame.buttons, button)
 end
+
+do
+    local serverSuffix = '-' .. GetRealmName()
+
+    local eventFrame = CreateFrame('Frame')
+    eventFrame:SetScript(function(_, _, name)
+        if factionData[name .. serverSuffix] then
+            name = name .. serverSuffix
+        elseif not factionData[name] then
+            return
+        end
+
+        AcceptGroup()
+
+        for characterName, data in pairs(factionData) do
+            if characterName ~= name and data[2] then
+                SendChatMessage(data[2], 'WHISPER', nil, characterName)
+            end
+        end
+
+        -- ui tweak
+        for i = 1, 4 do
+            local frame = _G['StaticPopup' .. i]
+            if frame:IsVisible() and frame.which == 'PARTY_INVITE' then
+                frame.inviteAccepted = true
+                StaticPopup_Hide('PARTY_INVITE')
+                return
+            elseif frame:IsVisible() and frame.which == 'PARTY_INVITE_XREALM' then
+                frame.inviteAccepted = true
+                StaticPopup_Hide('PARTY_INVITE_XREALM')
+                return
+            end
+        end
+    end)
+end
