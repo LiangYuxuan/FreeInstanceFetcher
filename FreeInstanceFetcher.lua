@@ -157,7 +157,7 @@ do
     local serverSuffix = '-' .. GetRealmName()
 
     local eventFrame = CreateFrame('Frame')
-    eventFrame:SetScript(function(_, _, name)
+    eventFrame:SetScript('OnEvent', function(_, _, name)
         if factionData[name .. serverSuffix] then
             name = name .. serverSuffix
         elseif not factionData[name] then
@@ -186,4 +186,5 @@ do
             end
         end
     end)
+    eventFrame:RegisterEvent('PARTY_INVITE_REQUEST')
 end
