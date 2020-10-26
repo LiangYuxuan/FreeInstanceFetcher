@@ -1,7 +1,10 @@
 ## Interface: 90001
 ## Title: |cff1572cfFree Instance Fetcher|r
 ## Title-zhCN: |cff1572cf便利CD获取|r
-## Author: Rhythm
-## Version: v9.0.2
+## Author: @project-author@
+## Version: @project-version@
+## X-ReleaseDate: @project-date-iso@
+## X-License: GPL-3.0
+## X-Curse-Project-ID: 415572
 
 FreeInstanceFetcher.lua
