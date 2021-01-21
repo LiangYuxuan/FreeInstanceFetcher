@@ -3,6 +3,7 @@
 ## Title-zhCN: |cff1572cf便利CD获取|r
 ## Author: @project-author@
 ## Version: @project-version@
+## SavedVariables: FIFConfig
 ## X-ReleaseDate: @project-date-iso@
 ## X-License: GPL-3.0
 ## X-Curse-Project-ID: 415572

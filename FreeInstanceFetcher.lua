@@ -1,3 +1,5 @@
+local addonName = ...
+
 local faction = UnitFactionGroup('player')
 if not faction then return end
 
@@ -18,6 +20,12 @@ local database = {
 
 local factionData = database[faction]
 if not factionData then return end
+
+-- AddOn Engine
+local F = CreateFrame('Frame')
+F:SetScript('OnEvent', function(self, event, ...)
+    self[event](self, event, ...)
+end)
 
 local buttons = {
     {
@@ -80,87 +88,16 @@ local buttons = {
     },
 }
 
-local function ButtonOnEnter(self)
-    if self.desc then
-        GameTooltip:Hide()
-        GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
-        GameTooltip:ClearLines()
-
-        GameTooltip:AddLine(self.desc, 1, 1, 1)
-
-        GameTooltip:Show()
-    end
-end
-
-local function ButtonOnLeave()
-    GameTooltip:Hide()
-end
-
-local mainFrame = CreateFrame('Button', 'FreeInstanceFetchFrame', UIParent)
-mainFrame:SetClampedToScreen(true)
-mainFrame:SetMovable(true)
-mainFrame:RegisterForDrag('LeftButton')
-mainFrame:SetScript('OnDragStart', mainFrame.StartMoving)
-mainFrame:SetScript('OnDragStop', mainFrame.StopMovingOrSizing)
-mainFrame:SetScript('OnClick', function(self)
-    if self.subFrame:IsShown() then
-        self.subFrame:Hide()
-    else
-        self.subFrame:Show()
-    end
-end)
-mainFrame:SetSize(48, 48)
-mainFrame:ClearAllPoints()
-mainFrame:SetPoint('TOPLEFT', 10, -100)
-
-mainFrame.texture = mainFrame:CreateTexture('BACKGROUND')
-mainFrame.texture:ClearAllPoints()
-mainFrame.texture:SetAllPoints()
-mainFrame.texture:SetTexture('Interface\\AddOns\\FreeInstanceFetcher\\Media\\CD.tga')
-mainFrame.texture:SetTexCoord(0, 1, 0, 1)
-
-local subFrame = CreateFrame('Frame', nil, mainFrame)
-subFrame:EnableMouse(true)
-subFrame:SetSize(#buttons * (24 + 12) - 12 + 20 * 2, 36)
-subFrame:ClearAllPoints()
-subFrame:SetPoint('LEFT', mainFrame, 'RIGHT', 0, 0)
-subFrame:Hide()
-mainFrame.subFrame = subFrame
-
-subFrame.buttons = {}
-for index, data in ipairs(buttons) do
-    local button = CreateFrame('Button', nil, subFrame)
-    button:SetScript('OnClick', data.func)
-    button:SetScript('OnEnter', ButtonOnEnter)
-    button:SetScript('OnLeave', ButtonOnLeave)
-    button:SetSize(24, 24)
-    button:ClearAllPoints()
-    button:SetPoint('LEFT', 20 + (index - 1) * (24 + 12), 0)
-
-    button.desc = data.desc
-
-    button.texture = button:CreateTexture('BACKGROUND')
-    button.texture:ClearAllPoints()
-    button.texture:SetPoint('TOPLEFT', button, 'TOPLEFT', -5, 5)
-    button.texture:SetPoint('BOTTOMRIGHT', button, 'BOTTOMRIGHT', 5, -5)
-    button.texture:SetTexture('Interface\\AddOns\\FreeInstanceFetcher\\Media\\Border.tga')
-    button.texture:SetTexCoord(0, 1, 0, 1)
-
-    button.text = button:CreateFontString(nil, 'OVERLAY')
-    button.text:SetFont(STANDARD_TEXT_FONT, 14, 'OUTLINE')
-    button.text:SetTextColor(1, 1, 1, 1)
-    button.text:SetPoint('CENTER')
-    button.text:SetJustifyH('CENTER')
-    button.text:SetText(data.name)
-
-    tinsert(subFrame.buttons, button)
-end
+F.addonAbbr = "fif"
+F.addonPrefix = "\124cFF70B8FF" .. addonName .. "\124r: "
+F.addonLocaleName = "\124cFF70B8FF便利CD获取\124r: "
+F.addonVersion = GetAddOnMetadata(addonName, 'Version')
+F.mediaPath = 'Interface\\AddOns\\' .. addonName .. '\\Media\\'
 
 do
     local serverSuffix = '-' .. GetRealmName()
 
-    local eventFrame = CreateFrame('Frame')
-    eventFrame:SetScript('OnEvent', function(_, _, name)
+    function F:PARTY_INVITE_REQUEST(_, name)
         if factionData[name .. serverSuffix] then
             name = name .. serverSuffix
         elseif not factionData[name] then
@@ -188,6 +125,133 @@ do
                 return
             end
         end
-    end)
-    eventFrame:RegisterEvent('PARTY_INVITE_REQUEST')
+    end
 end
+
+do
+    local function ButtonOnEnter(self)
+        if self.desc then
+            GameTooltip:Hide()
+            GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+            GameTooltip:ClearLines()
+
+            GameTooltip:AddLine(self.desc, 1, 1, 1)
+
+            GameTooltip:Show()
+        end
+    end
+
+    local function ButtonOnLeave()
+        GameTooltip:Hide()
+    end
+
+    local MAIN_BUTTON_SIZE = 48
+    local SUB_BUTTON_SIZE = 24
+    local SUB_BUTTON_PADDING = 20
+    local SUB_BUTTON_SPACING = 12
+
+    function F:BuildFrame()
+        local mainFrame = CreateFrame('Button', addonName .. 'Frame', UIParent)
+        mainFrame:SetClampedToScreen(true)
+        mainFrame:SetMovable(true)
+        mainFrame:RegisterForDrag('LeftButton')
+        mainFrame:SetScript('OnDragStart', mainFrame.StartMoving)
+        mainFrame:SetScript('OnDragStop', mainFrame.StopMovingOrSizing)
+        mainFrame:SetScript('OnClick', function(self)
+            if self.subFrame:IsShown() then
+                self.subFrame:Hide()
+            else
+                self.subFrame:Show()
+            end
+        end)
+        mainFrame:SetSize(MAIN_BUTTON_SIZE, MAIN_BUTTON_SIZE)
+        mainFrame:ClearAllPoints()
+        mainFrame:SetPoint('TOPLEFT', 10, -100)
+
+        mainFrame.texture = mainFrame:CreateTexture('BACKGROUND')
+        mainFrame.texture:ClearAllPoints()
+        mainFrame.texture:SetAllPoints()
+        mainFrame.texture:SetTexture(self.mediaPath .. 'CD.tga')
+        mainFrame.texture:SetTexCoord(0, 1, 0, 1)
+
+        local subFrame = CreateFrame('Frame', nil, mainFrame)
+        subFrame:EnableMouse(true)
+        subFrame:SetSize(#buttons * (SUB_BUTTON_SIZE + SUB_BUTTON_SPACING) - SUB_BUTTON_SPACING + SUB_BUTTON_PADDING * 2, 36)
+        subFrame:ClearAllPoints()
+        subFrame:SetPoint('LEFT', mainFrame, 'RIGHT', 0, 0)
+        subFrame:Hide()
+        mainFrame.subFrame = subFrame
+
+        subFrame.buttons = {}
+        for index, data in ipairs(buttons) do
+            local button = CreateFrame('Button', nil, subFrame)
+            button:SetScript('OnClick', data.func)
+            button:SetScript('OnEnter', ButtonOnEnter)
+            button:SetScript('OnLeave', ButtonOnLeave)
+            button:SetSize(SUB_BUTTON_SIZE, SUB_BUTTON_SIZE)
+            button:ClearAllPoints()
+            button:SetPoint('LEFT', SUB_BUTTON_PADDING + (index - 1) * (SUB_BUTTON_SIZE + SUB_BUTTON_SPACING), 0)
+
+            button.desc = data.desc
+
+            button.texture = button:CreateTexture('BACKGROUND')
+            button.texture:ClearAllPoints()
+            button.texture:SetPoint('TOPLEFT', button, 'TOPLEFT', -5, 5)
+            button.texture:SetPoint('BOTTOMRIGHT', button, 'BOTTOMRIGHT', 5, -5)
+            button.texture:SetTexture(self.mediaPath .. 'Border.tga')
+            button.texture:SetTexCoord(0, 1, 0, 1)
+
+            button.text = button:CreateFontString(nil, 'OVERLAY')
+            button.text:SetFont(STANDARD_TEXT_FONT, 14, 'OUTLINE')
+            button.text:SetTextColor(1, 1, 1, 1)
+            button.text:SetPoint('CENTER')
+            button.text:SetJustifyH('CENTER')
+            button.text:SetText(data.name)
+
+            tinsert(subFrame.buttons, button)
+        end
+    end
+end
+
+do
+    local defaultConfig = {
+        DBVer = 1,
+    }
+
+    function F:ADDON_LOADED(_, name)
+        if name == addonName then
+            self:UnregisterEvent('ADDON_LOADED')
+
+            if not FIFConfig then
+                FIFConfig = defaultConfig
+            else
+                -- old database version fallback
+                if not FISConfig.DBVer then
+                    -- corrupted
+                    FIFConfig = defaultConfig
+                end
+                FIFConfig.DBVer = 1
+
+                -- handle deprecated
+                for key in pairs(FIFConfig) do
+                    if type(defaultConfig[key]) == 'nil' then
+                        FIFConfig[key] = nil
+                    end
+                end
+                -- apply default value
+                for key, value in pairs(defaultConfig) do
+                    if not FIFConfig[key] then
+                        FIFConfig[key] = value
+                    end
+                end
+            end
+            self.db = FIFConfig
+
+            self:BuildFrame()
+
+            self:RegisterEvent('PARTY_INVITE_REQUEST')
+        end
+    end
+end
+
+F:RegisterEvent('ADDON_LOADED')

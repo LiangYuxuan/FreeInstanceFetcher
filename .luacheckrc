@@ -28,6 +28,7 @@ globals = {
 
 	-- FreeInstanceFetcher
 	"FreeInstanceFetchFrame",
+	"FIFConfig",
 
 	-- FrameXML misc
 	"C_Timer",
