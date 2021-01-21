@@ -32,6 +32,15 @@ local buttons = {
         name = "进",
         desc = "发送进组密语",
         func = function()
+            local now = GetTime()
+            if F.prevInv and F.prevInv > now - 30 then
+                F:Print("你每30秒只能发送一次进组密语")
+                return
+            end
+            F.prevInv = now
+
+            CooldownFrame_Set(self.cooldown, now, 30, 1)
+
             for characterName, data in pairs(factionData) do
                 if data[1] then
                     SendChatMessage(data[1], 'WHISPER', nil, characterName)
@@ -94,6 +103,10 @@ F.addonLocaleName = "\124cFF70B8FF便利CD获取\124r: "
 F.addonVersion = GetAddOnMetadata(addonName, 'Version')
 F.mediaPath = 'Interface\\AddOns\\' .. addonName .. '\\Media\\'
 
+function F:Print(...)
+    _G.DEFAULT_CHAT_FRAME:AddMessage(self.addonPrefix .. format(...))
+end
+
 do
     local serverSuffix = '-' .. GetRealmName()
 
@@ -129,6 +142,18 @@ do
 end
 
 do
+    local function MainFrameOnClick(self, button)
+        if button == 'RightButton' then
+            -- TODO: skin
+        else
+            if self.subFrame:IsShown() then
+                self.subFrame:Hide()
+            else
+                self.subFrame:Show()
+            end
+        end
+    end
+
     local function ButtonOnEnter(self)
         if self.desc then
             GameTooltip:Hide()
@@ -154,16 +179,11 @@ do
         local mainFrame = CreateFrame('Button', addonName .. 'Frame', UIParent)
         mainFrame:SetClampedToScreen(true)
         mainFrame:SetMovable(true)
+        mainFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
         mainFrame:RegisterForDrag('LeftButton')
         mainFrame:SetScript('OnDragStart', mainFrame.StartMoving)
         mainFrame:SetScript('OnDragStop', mainFrame.StopMovingOrSizing)
-        mainFrame:SetScript('OnClick', function(self)
-            if self.subFrame:IsShown() then
-                self.subFrame:Hide()
-            else
-                self.subFrame:Show()
-            end
-        end)
+        mainFrame:SetScript('OnClick', MainFrameOnClick)
         mainFrame:SetSize(MAIN_BUTTON_SIZE, MAIN_BUTTON_SIZE)
         mainFrame:ClearAllPoints()
         mainFrame:SetPoint('TOPLEFT', 10, -100)
@@ -185,6 +205,7 @@ do
         subFrame.buttons = {}
         for index, data in ipairs(buttons) do
             local button = CreateFrame('Button', nil, subFrame)
+            button:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
             button:SetScript('OnClick', data.func)
             button:SetScript('OnEnter', ButtonOnEnter)
             button:SetScript('OnLeave', ButtonOnLeave)
@@ -207,6 +228,17 @@ do
             button.text:SetPoint('CENTER')
             button.text:SetJustifyH('CENTER')
             button.text:SetText(data.name)
+
+            button.cooldown = CreateFrame('Cooldown', nil, button, 'CooldownFrameTemplate')
+            button.cooldown:ClearAllPoints()
+            button.cooldown:SetAllPoints()
+            button.cooldown:SetDrawEdge(false)
+
+            if _G.ElvUI then
+                -- everyone has his fav addon right?
+                button.cooldown.CooldownOverride = 'actionbar'
+                _G.ElvUI[1]:RegisterCooldown(button.cooldown)
+            end
 
             tinsert(subFrame.buttons, button)
         end
