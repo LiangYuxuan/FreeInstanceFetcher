@@ -1,4 +1,4 @@
-local addonName = ...
+local addonName, addon = ...
 
 local faction = UnitFactionGroup('player')
 if not faction then return end
@@ -26,6 +26,7 @@ local F = CreateFrame('Frame')
 F:SetScript('OnEvent', function(self, event, ...)
     self[event](self, event, ...)
 end)
+addon[1] = F
 
 local buttons = {
     {
@@ -41,8 +42,19 @@ local buttons = {
 
             CooldownFrame_Set(self.cooldown, now, 30, 1)
 
+            local dynamic
+            if F.Dynamic and F.CRC32 then
+                local hour = GetGameTime()
+                local hourText = format('%.2d', hour)
+
+                local hash = format('%.8x', CRC32(hourText .. F.playerFullName))
+                dynamic = hourText .. hash
+            end
+
             for characterName, data in pairs(factionData) do
-                if data[1] then
+                if dynamic then
+                    SendChatMessage(dynamic, 'WHISPER', nil, characterName)
+                elseif data[1] then
                     SendChatMessage(data[1], 'WHISPER', nil, characterName)
                 end
             end
@@ -102,6 +114,9 @@ F.addonPrefix = "\124cFF70B8FF" .. addonName .. "\124r: "
 F.addonLocaleName = "\124cFF70B8FF便利CD获取\124r: "
 F.addonVersion = GetAddOnMetadata(addonName, 'Version')
 F.mediaPath = 'Interface\\AddOns\\' .. addonName .. '\\Media\\'
+F.playerFullName = UnitName('player') .. '-' .. GetRealmName()
+
+F.Dynamic = true -- Config: Dynamic Whisper
 
 function F:Print(...)
     _G.DEFAULT_CHAT_FRAME:AddMessage(self.addonPrefix .. format(...))
