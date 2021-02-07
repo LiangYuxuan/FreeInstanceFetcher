@@ -251,10 +251,16 @@ do
         mainFrame:SetScript('OnDragStart', mainFrame.StartMoving)
         mainFrame:SetScript('OnDragStop', mainFrame.StopMovingOrSizing)
         mainFrame:SetScript('OnClick', MainFrameOnClick)
+        mainFrame:SetScript('OnEnter', ButtonOnEnter)
+        mainFrame:SetScript('OnLeave', ButtonOnLeave)
         mainFrame:SetSize(MAIN_BUTTON_SIZE, MAIN_BUTTON_SIZE)
         mainFrame:ClearAllPoints()
         mainFrame:SetPoint('TOPLEFT', 10, -100)
         self.mainFrame = mainFrame
+
+        mainFrame.desc = self.addonLocaleName .. " " .. self.addonVersion .. "\n" ..
+            "Code By Rhythm w/ <3" .. "\n" ..
+            "故障处理微信: wowermaster"
 
         mainFrame.texture = mainFrame:CreateTexture('BACKGROUND')
         mainFrame.texture:ClearAllPoints()
