@@ -142,9 +142,76 @@ do
 end
 
 do
+    -- Public Adjust Func
+    local function ShowMainText()
+        F.mainFrame.text:Show()
+    end
+
+    local function HideMainText()
+        F.mainFrame.text:Hide()
+    end
+
+    local skinList = {
+        {
+            name = "默认皮肤",
+            mainTexture = F.mediaPath .. 'CD.tga',
+            subTexture = F.mediaPath .. 'Border.tga',
+            func = HideMainText,
+        },
+        {
+            name = "皮肤01",
+            mainTexture = F.mediaPath .. 'Skin\\01_CD.tga',
+            subTexture = F.mediaPath .. 'Skin\\01_Border.tga',
+            func = ShowMainText,
+        },
+    }
+
+    local currentSkin
+    local menuTable
+    local menuFrame = CreateFrame('Frame', addonName .. 'MenuFrame', UIParent, 'UIDropDownMenuTemplate')
+
+    local function Apply(_, arg1)
+        F:ApplySkin(arg1)
+    end
+
+    function F:ShowSkinMenu()
+        if not menuTable then
+            menuTable = {
+                { text = "皮肤", isTitle = true, notCheckable = true },
+            }
+            for index, data in ipairs(skinList) do
+                local currentIndex = index
+                tinsert(menuTable, {
+                    text = data.name, arg1 = currentIndex, func = Apply,
+                    checked = function()
+                        return currentIndex == currentSkin
+                    end,
+                })
+            end
+        end
+
+        UIDropDownMenu_SetAnchor(menuFrame, 0, 0, 'TOPLEFT', self.mainFrame, 'TOPRIGHT')
+        EasyMenu(menuTable, menuFrame, nil, nil, nil, 'MENU')
+    end
+
+    function F:ApplySkin(index)
+        local data = skinList[index]
+        self.mainFrame.texture:SetTexture(data.mainTexture)
+        for _, button in ipairs(self.mainFrame.subFrame.buttons) do
+            button:SetTexture(data.subTexture)
+        end
+        if data.func then
+            data.func(data)
+        end
+
+        currentSkin = index
+    end
+end
+
+do
     local function MainFrameOnClick(self, button)
         if button == 'RightButton' then
-            -- TODO: skin
+            F:ShowSkinMenu()
         else
             if self.subFrame:IsShown() then
                 self.subFrame:Hide()
@@ -187,12 +254,19 @@ do
         mainFrame:SetSize(MAIN_BUTTON_SIZE, MAIN_BUTTON_SIZE)
         mainFrame:ClearAllPoints()
         mainFrame:SetPoint('TOPLEFT', 10, -100)
+        self.mainFrame = mainFrame
 
         mainFrame.texture = mainFrame:CreateTexture('BACKGROUND')
         mainFrame.texture:ClearAllPoints()
         mainFrame.texture:SetAllPoints()
-        mainFrame.texture:SetTexture(self.mediaPath .. 'CD.tga')
         mainFrame.texture:SetTexCoord(0, 1, 0, 1)
+
+        mainFrame.text = mainFrame:CreateFontString(nil, 'OVERLAY')
+        mainFrame.text:SetFont(STANDARD_TEXT_FONT, 12, 'OUTLINE')
+        mainFrame.text:SetTextColor(1, 1, 1, 1)
+        mainFrame.text:SetPoint('CENTER')
+        mainFrame.text:SetJustifyH('CENTER')
+        mainFrame.text:SetText("CD")
 
         local subFrame = CreateFrame('Frame', nil, mainFrame)
         subFrame:EnableMouse(true)
@@ -219,7 +293,6 @@ do
             button.texture:ClearAllPoints()
             button.texture:SetPoint('TOPLEFT', button, 'TOPLEFT', -5, 5)
             button.texture:SetPoint('BOTTOMRIGHT', button, 'BOTTOMRIGHT', 5, -5)
-            button.texture:SetTexture(self.mediaPath .. 'Border.tga')
             button.texture:SetTexCoord(0, 1, 0, 1)
 
             button.text = button:CreateFontString(nil, 'OVERLAY')
@@ -248,6 +321,7 @@ end
 do
     local defaultConfig = {
         DBVer = 1,
+        Skin = 1,
     }
 
     function F:ADDON_LOADED(_, name)
@@ -280,6 +354,7 @@ do
             self.db = FIFConfig
 
             self:BuildFrame()
+            self:ApplySkin(self.db.Skin)
 
             self:RegisterEvent('PARTY_INVITE_REQUEST')
         end
