@@ -9,3 +9,4 @@
 ## X-Curse-Project-ID: 415572
 
 FreeInstanceFetcher.lua
+CRC32.lua

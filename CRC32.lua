@@ -3,7 +3,7 @@
 
 local F = unpack(select(2, ...))
 
-local bit_band, bit_bxor, bit_rshift = bit.band, bit.bxor, bit.rshift
+local bit_band, bit_bxor, bit_rshift, str_byte, str_len = bit.band, bit.bxor, bit.rshift, string.byte, string.len
 local consts = {
     0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F,
     0xE963A535, 0x9E6495A3, 0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988,
@@ -50,10 +50,15 @@ local consts = {
     0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
 }
 
-function F:CRC32(t)
-    local crc, l = 0xFFFFFFFF, #t
+function F:CRC32(s)
+    local crc, l = 0xFFFFFFFF, str_len(s)
     for i = 1, l do
-        crc = bit_bxor(bit_rshift(crc, 8), consts[bit_band(bit_bxor(crc, t[i]), 0xFF) + 1])
+        crc = bit_bxor(bit_rshift(crc, 8), consts[bit_band(bit_bxor(crc, str_byte(s, i)), 0xFF) + 1])
     end
     return bit_bxor(crc, -1)
+end
+
+function F:CRC32Hex(s)
+    local result = self:CRC32(s)
+    return format('%.4X', bit_rshift(result, 16)) .. format('%.4X', bit_band(result, 0xFF))
 end

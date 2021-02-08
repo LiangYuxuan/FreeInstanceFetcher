@@ -32,7 +32,7 @@ local buttons = {
     {
         name = "进",
         desc = "发送进组密语",
-        func = function()
+        func = function(self)
             local now = GetTime()
             if F.prevInv and F.prevInv > now - 30 then
                 F:Print("你每30秒只能发送一次进组密语")
@@ -43,11 +43,11 @@ local buttons = {
             CooldownFrame_Set(self.cooldown, now, 30, 1)
 
             local dynamic
-            if F.Dynamic and F.CRC32 then
+            if F.Dynamic then
                 local hour = GetGameTime()
                 local hourText = format('%.2d', hour)
 
-                local hash = format('%.8x', CRC32(hourText .. F.playerFullName))
+                local hash = F:CRC32Hex(hourText .. F.playerFullName)
                 dynamic = hourText .. hash
             end
 
@@ -181,7 +181,6 @@ do
         },
     }
 
-    local currentSkin
     local menuTable
     local menuFrame = CreateFrame('Frame', addonName .. 'MenuFrame', UIParent, 'UIDropDownMenuTemplate')
 
@@ -199,7 +198,7 @@ do
                 tinsert(menuTable, {
                     text = data.name, arg1 = currentIndex, func = Apply,
                     checked = function()
-                        return currentIndex == currentSkin
+                        return currentIndex == self.db.Skin
                     end,
                 })
             end
@@ -213,13 +212,13 @@ do
         local data = skinList[index]
         self.mainFrame.texture:SetTexture(data.mainTexture)
         for _, button in ipairs(self.mainFrame.subFrame.buttons) do
-            button:SetTexture(data.subTexture)
+            button.texture:SetTexture(data.subTexture)
         end
         if data.func then
             data.func(data)
         end
 
-        currentSkin = index
+        self.db.Skin = index
     end
 end
 
@@ -353,7 +352,7 @@ do
                 FIFConfig = defaultConfig
             else
                 -- old database version fallback
-                if not FISConfig.DBVer then
+                if not FIFConfig.DBVer then
                     -- corrupted
                     FIFConfig = defaultConfig
                 end
