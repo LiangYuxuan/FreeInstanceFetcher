@@ -168,16 +168,44 @@ do
 
     local skinList = {
         {
-            name = "默认皮肤",
-            mainTexture = F.mediaPath .. 'CD.tga',
-            subTexture = F.mediaPath .. 'Border.tga',
+            name = "暗影国度",
+            mainTexture = F.mediaPath .. 'Major',
+            subTexture = F.mediaPath .. 'Minor',
             func = HideMainText,
         },
         {
-            name = "皮肤01",
-            mainTexture = F.mediaPath .. 'Skin\\01_CD.tga',
-            subTexture = F.mediaPath .. 'Skin\\01_Border.tga',
-            func = ShowMainText,
+            name = "为了联盟",
+            mainTexture = F.mediaPath .. 'Skin\\01_Major',
+            subTexture = F.mediaPath .. 'Skin\\01_Minor',
+            func = HideMainText,
+        },
+        {
+            name = "为了部落",
+            mainTexture = F.mediaPath .. 'Skin\\02_Major',
+            subTexture = F.mediaPath .. 'Skin\\02_Minor',
+            func = HideMainText,
+        },
+        {
+            name = "蓝色火焰",
+            mainTexture = F.mediaPath .. 'Skin\\03_Major',
+            subTexture = F.mediaPath .. 'Skin\\03_Minor',
+            func = HideMainText,
+        },
+        {
+            name = "可爱喵咪",
+            mainTexture = F.mediaPath .. 'Skin\\04_Major',
+            subTexture = F.mediaPath .. 'Skin\\04_Minor',
+            func = HideMainText,
+        },
+       {
+            name = "职业图标",
+            subTexture = F.mediaPath .. 'Skin\\00_Transparent',
+            func = function()
+                HideMainText()
+
+                local classFilename = select(2, UnitClass('player'))
+                F.mainFrame.texture:SetTexture(F.mediaPath .. 'Skin\\05_Major_' .. classFilename)
+            end,
         },
     }
 
@@ -209,6 +237,10 @@ do
     end
 
     function F:ApplySkin(index)
+        if not skinList[index] then
+            index = 1
+        end
+
         local data = skinList[index]
         self.mainFrame.texture:SetTexture(data.mainTexture)
         for _, button in ipairs(self.mainFrame.subFrame.buttons) do
