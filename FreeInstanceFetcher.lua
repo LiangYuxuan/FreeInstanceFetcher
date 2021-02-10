@@ -158,9 +158,9 @@ end
 
 do
     -- Public Adjust Func
-    local function ShowMainText()
-        F.mainFrame.text:Show()
-    end
+    -- local function ShowMainText()
+    --     F.mainFrame.text:Show()
+    -- end
 
     local function HideMainText()
         F.mainFrame.text:Hide()

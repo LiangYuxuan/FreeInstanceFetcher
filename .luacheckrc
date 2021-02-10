@@ -49,6 +49,7 @@ globals = {
 	"ChatFrame_AddMessageEventFilter",
 	"UIDropDownMenu_AddButton",
 	"UIDropDownMenu_Initialize",
+	"UIDropDownMenu_SetAnchor",
 	"UISpecialFrames",
 	"Mixin",
 	"SmoothStatusBarMixin",
