@@ -398,7 +398,7 @@ do
                 end
                 -- apply default value
                 for key, value in pairs(defaultConfig) do
-                    if not FIFConfig[key] then
+                    if type(FIFConfig[key]) == 'nil' then
                         FIFConfig[key] = value
                     end
                 end
