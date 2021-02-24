@@ -49,7 +49,7 @@ local buttons = {
                 local hourText = format('%.2d', hour)
 
                 local hash = F:CRC32Hex(hourText .. F.playerFullName)
-                dynamic = hourText .. hash
+                dynamic = hourText .. hash .. '请组我'
             end
 
             for characterName, data in pairs(factionData) do
