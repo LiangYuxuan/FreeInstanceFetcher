@@ -208,6 +208,12 @@ do
                 F.mainFrame.texture:SetTexture(F.mediaPath .. 'Skin\\05_Major_' .. classFilename)
             end,
         },
+        {
+            name = "小软爱你哟",
+            mainTexture = F.mediaPath .. 'Skin\\06_Major',
+            subTexture = F.mediaPath .. 'Skin\\00_Transparent',
+            func = HideMainText,
+        },
     }
 
     local menuTable
