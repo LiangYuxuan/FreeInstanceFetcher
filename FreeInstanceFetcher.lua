@@ -5,17 +5,17 @@ if not faction then return end
 
 local database = {
     Alliance = {
-        ['恩托哇-瓦里安'] = {'9', '0'},
-        ['太阳断月之弦-末日行者'] = {'9', '0'},
+        ['恩托哇-瓦里安'] = {true, '9', '0'},
+        ['太阳断月之弦-末日行者'] = {true, '9', '0'},
     },
     Horde = {
-        ['咩咩的羊羔-金色平原'] = {'9', '0'},
-        ['咩咩的羊羔-瓦里安'] = {'9', '0'},
-        ['愤怒的羊羊-瓦拉纳'] = {'9', '0'},
-        ['咩咩的猎手-金色平原'] = {'9', '0'},
-        ['愤怒的羊羊-冰霜之刃'] = {'9', '0'},
-        ['日乐购-金色平原'] = {'9', '0'},
-        ['德娴丸丸-白银之手'] = {'9', '0'},
+        ['咩咩的羊羔-金色平原'] = {true, '9', '0'},
+        ['咩咩的羊羔-瓦里安'] = {true, '9', '0'},
+        ['愤怒的羊羊-瓦拉纳'] = {true, '9', '0'},
+        ['咩咩的猎手-金色平原'] = {true, '9', '0'},
+        ['愤怒的羊羊-冰霜之刃'] = {true, '9', '0'},
+        ['日乐购-金色平原'] = {true, '9', '0'},
+        ['德娴丸丸-白银之手'] = {true, '9', '0'},
     },
 }
 
@@ -43,20 +43,17 @@ local buttons = {
 
             CooldownFrame_Set(self.cooldown, now, 30, 1)
 
-            local dynamic
-            if F.Dynamic then
-                local hour = GetGameTime()
-                local hourText = format('%.2d', hour)
+            local hour = GetGameTime()
+            local hourText = format('%.2d', hour)
 
-                local hash = F:CRC32Hex(hourText .. F.playerFullName)
-                dynamic = hourText .. hash .. '请组我'
-            end
+            local hash = F:CRC32Hex(hourText .. F.playerFullName)
+            local dynamic = hourText .. hash .. '请组我'
 
             for characterName, data in pairs(factionData) do
-                if dynamic then
+                if dynamic and data[1] then
                     SendChatMessage(dynamic, 'WHISPER', nil, characterName)
-                elseif data[1] then
-                    SendChatMessage(data[1], 'WHISPER', nil, characterName)
+                elseif data[2] then
+                    SendChatMessage(data[2], 'WHISPER', nil, characterName)
                 end
             end
         end,
@@ -66,8 +63,8 @@ local buttons = {
         desc = "发送清除队列命令",
         func = function()
             for characterName, data in pairs(factionData) do
-                if data[2] then
-                    SendChatMessage(data[2], 'WHISPER', nil, characterName)
+                if data[3] then
+                    SendChatMessage(data[3], 'WHISPER', nil, characterName)
                 end
             end
         end,
@@ -117,8 +114,6 @@ F.addonVersion = GetAddOnMetadata(addonName, 'Version')
 F.mediaPath = 'Interface\\AddOns\\' .. addonName .. '\\Media\\'
 F.playerFullName = UnitName('player') .. '-' .. GetRealmName()
 
-F.Dynamic = true -- Config: Dynamic Whisper
-
 function F:Print(...)
     _G.DEFAULT_CHAT_FRAME:AddMessage(self.addonPrefix .. format(...))
 end
@@ -136,8 +131,8 @@ do
         AcceptGroup()
 
         for characterName, data in pairs(factionData) do
-            if characterName ~= name and data[2] then
-                SendChatMessage(data[2], 'WHISPER', nil, characterName)
+            if characterName ~= name and data[3] then
+                SendChatMessage(data[3], 'WHISPER', nil, characterName)
             end
         end
 
