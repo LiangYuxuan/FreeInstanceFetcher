@@ -3,6 +3,8 @@
 
 local F = unpack(select(2, ...))
 
+local format = format
+
 local bit_band, bit_bxor, bit_rshift, str_byte, str_len = bit.band, bit.bxor, bit.rshift, string.byte, string.len
 local consts = {
     0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F,
@@ -60,5 +62,9 @@ end
 
 function F:CRC32Hex(s)
     local result = self:CRC32(s)
-    return format('%.4X', bit_rshift(result, 16)) .. format('%.4X', bit_band(result, 0xFF))
+    return format('%.4X', bit_rshift(result, 16)) .. format('%.4X', bit_band(result, 0xFFFF))
+end
+
+function F:ToHex32(number)
+    return format('%.4X', bit_rshift(number, 16)) .. format('%.4X', bit_band(number, 0xFFFF))
 end
