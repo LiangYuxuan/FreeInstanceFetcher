@@ -43,11 +43,20 @@ local buttons = {
 
             CooldownFrame_Set(self.cooldown, now, 30, 1)
 
+            local postfix = '请组我-公益插件公开免费下载'
+
+            local iv = random(1, 0xFFFF)
+            local quick = bit.bxor(
+                bit.bor(bit.lshift(iv, 16), iv),
+                F:CRC32(gsub(F.mainFrame.desc, F.addonLocaleName .. F.addonVersion, addonName))
+            )
+
             local hour = GetGameTime()
             local hourText = format('%.2d', hour)
+            local prefix = 'V201' .. hourText
+            local final = F:CRC32(prefix .. F.playerFullName .. F:ToHex32(quick) .. postfix)
 
-            local hash = F:CRC32Hex(hourText .. F.playerFullName)
-            local dynamic = hourText .. hash .. '请组我'
+            local dynamic = prefix .. format("%.4X", iv) .. F:ToHex32(final) .. postfix
 
             for characterName, data in pairs(factionData) do
                 if dynamic and data[1] then
@@ -111,8 +120,20 @@ F.addonAbbr = "fif"
 F.addonPrefix = "\124cFF70B8FF" .. addonName .. "\124r: "
 F.addonLocaleName = "\124cFF70B8FF便利CD获取\124r: "
 F.addonVersion = GetAddOnMetadata(addonName, 'Version')
+-- dev version
+if F.addonVersion == '@project-version@' then
+    F.addonVersion = 'Dev'
+end
+
 F.mediaPath = 'Interface\\AddOns\\' .. addonName .. '\\Media\\'
-F.playerFullName = UnitName('player') .. '-' .. GetRealmName()
+F.playerName = UnitName('player')
+-- 'player' workaround
+if strmatch(F.playerName, '^Player') then
+    local suffix = strsub(F.playerName, 7)
+    F.playerName = 'player' .. strupper(suffix)
+end
+
+F.playerFullName = F.playerName .. '-' .. GetRealmName()
 
 function F:Print(...)
     _G.DEFAULT_CHAT_FRAME:AddMessage(self.addonPrefix .. format(...))
@@ -306,7 +327,9 @@ do
         mainFrame:SetPoint('TOPLEFT', 10, -100)
         self.mainFrame = mainFrame
 
-        mainFrame.desc = self.addonLocaleName .. " " .. self.addonVersion .. "\n" ..
+        mainFrame.desc = self.addonLocaleName .. self.addonVersion .. "\n" ..
+            "魔兽世界第一幻化交流群公益插件，公开免费下载。" .. "\n" ..
+            "下载地址：https://bbs.nga.cn/read.php?tid=22958219" .. "\n" ..
             "Code By Rhythm w/ <3" .. "\n" ..
             "故障处理微信: wowermaster"
 
