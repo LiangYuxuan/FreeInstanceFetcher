@@ -186,48 +186,48 @@ do
     local skinList = {
         {
             name = "暗影国度",
-            mainTexture = F.mediaPath .. 'Major',
-            subTexture = F.mediaPath .. 'Minor',
+            mainTexture = F.mediaPath .. 'Icon\\00_Major',
+            subTexture = F.mediaPath .. 'Icon\\00_Minor',
             func = HideMainText,
         },
         {
             name = "为了联盟",
-            mainTexture = F.mediaPath .. 'Skin\\01_Major',
-            subTexture = F.mediaPath .. 'Skin\\01_Minor',
+            mainTexture = F.mediaPath .. 'Icon\\01_Major',
+            subTexture = F.mediaPath .. 'Icon\\01_Minor',
             func = HideMainText,
         },
         {
             name = "为了部落",
-            mainTexture = F.mediaPath .. 'Skin\\02_Major',
-            subTexture = F.mediaPath .. 'Skin\\02_Minor',
+            mainTexture = F.mediaPath .. 'Icon\\02_Major',
+            subTexture = F.mediaPath .. 'Icon\\02_Minor',
             func = HideMainText,
         },
         {
             name = "蓝色火焰",
-            mainTexture = F.mediaPath .. 'Skin\\03_Major',
-            subTexture = F.mediaPath .. 'Skin\\03_Minor',
+            mainTexture = F.mediaPath .. 'Icon\\03_Major',
+            subTexture = F.mediaPath .. 'Icon\\03_Minor',
             func = HideMainText,
         },
         {
             name = "可爱喵咪",
-            mainTexture = F.mediaPath .. 'Skin\\04_Major',
-            subTexture = F.mediaPath .. 'Skin\\04_Minor',
+            mainTexture = F.mediaPath .. 'Icon\\04_Major',
+            subTexture = F.mediaPath .. 'Icon\\04_Minor',
             func = HideMainText,
         },
        {
             name = "职业图标",
-            subTexture = F.mediaPath .. 'Skin\\00_Transparent',
+            subTexture = F.mediaPath .. 'Icon\\00_Transparent',
             func = function()
                 HideMainText()
 
                 local classFilename = select(2, UnitClass('player'))
-                F.mainFrame.texture:SetTexture(F.mediaPath .. 'Skin\\05_Major_' .. classFilename)
+                F.mainFrame.texture:SetTexture(F.mediaPath .. 'Icon\\05_Major_' .. classFilename)
             end,
         },
         {
             name = "小软爱你哟",
-            mainTexture = F.mediaPath .. 'Skin\\06_Major',
-            subTexture = F.mediaPath .. 'Skin\\00_Transparent',
+            mainTexture = F.mediaPath .. 'Icon\\06_Major',
+            subTexture = F.mediaPath .. 'Icon\\00_Transparent',
             func = HideMainText,
         },
     }
