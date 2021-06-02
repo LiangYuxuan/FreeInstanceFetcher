@@ -56,7 +56,7 @@ local buttons = {
             local prefix = 'V201' .. hourText
             local final = F:CRC32(prefix .. F.playerFullName .. F:ToHex32(quick) .. postfix)
 
-            local dynamic = prefix .. format("%.4X", iv) .. F:ToHex32(final) .. postfix
+            local dynamic = prefix .. format('%.4X', iv) .. F:ToHex32(final) .. postfix
 
             for characterName, data in pairs(factionData) do
                 if dynamic and data[1] then
