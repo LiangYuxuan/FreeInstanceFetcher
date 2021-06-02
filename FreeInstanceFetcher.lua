@@ -120,10 +120,11 @@ F.addonAbbr = "fif"
 F.addonPrefix = "\124cFF70B8FF" .. addonName .. "\124r: "
 F.addonLocaleName = "\124cFF70B8FF便利CD获取\124r: "
 F.addonVersion = GetAddOnMetadata(addonName, 'Version')
--- dev version
+--@debug@
 if F.addonVersion == '@project-version@' then
     F.addonVersion = 'Dev'
 end
+--@end-debug@
 
 F.mediaPath = 'Interface\\AddOns\\' .. addonName .. '\\Media\\'
 F.playerName = UnitName('player')
