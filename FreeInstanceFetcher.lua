@@ -65,6 +65,10 @@ local buttons = {
                     SendChatMessage(data[2], 'WHISPER', nil, characterName)
                 end
             end
+
+            if F.db.EnableSound and F.currentSkin and F.currentSkin.sound and F.currentSkin.sound[1] then
+                PlaySoundFile(F.currentSkin.sound[1], 'Master')
+            end
         end,
     },
     {
@@ -84,6 +88,10 @@ local buttons = {
         func = function()
             if IsInGroup(LE_PARTY_CATEGORY_HOME) then
                 SendChatMessage('h', 'PARTY')
+
+                if F.db.EnableSound and F.currentSkin and F.currentSkin.sound and F.currentSkin.sound[3] then
+                    PlaySoundFile(F.currentSkin.sound[3], 'Master')
+                end
             end
         end,
     },
@@ -93,6 +101,10 @@ local buttons = {
         func = function()
             if IsInGroup(LE_PARTY_CATEGORY_HOME) then
                 SendChatMessage('n', 'PARTY')
+
+                if F.db.EnableSound and F.currentSkin and F.currentSkin.sound and F.currentSkin.sound[4] then
+                    PlaySoundFile(F.currentSkin.sound[4], 'Master')
+                end
             end
         end,
     },
@@ -111,6 +123,10 @@ local buttons = {
         func = function()
             if IsInGroup(LE_PARTY_CATEGORY_HOME) then
                 SendChatMessage('leave', 'PARTY')
+
+                if F.db.EnableSound and F.currentSkin and F.currentSkin.sound and F.currentSkin.sound[5] then
+                    PlaySoundFile(F.currentSkin.sound[5], 'Master')
+                end
             end
         end,
     },
@@ -152,6 +168,10 @@ do
 
         AcceptGroup()
 
+        if self.db.EnableSound and self.currentSkin and self.currentSkin.sound and self.currentSkin.sound[2] then
+            PlaySoundFile(self.currentSkin.sound[2], 'Master')
+        end
+
         for characterName, data in pairs(factionData) do
             if characterName ~= name and data[3] then
                 SendChatMessage(data[3], 'WHISPER', nil, characterName)
@@ -184,11 +204,24 @@ do
         F.mainFrame.text:Hide()
     end
 
+    -- xxx: sound id stands for
+    -- 1 -> send invite whisper
+    -- 2 -> accept invite
+    -- 3 -> convert to heroic
+    -- 4 -> convert to normal
+    -- 5 -> send quit whisper
     local skinList = {
         {
             name = "暗影国度",
             mainTexture = F.mediaPath .. 'Icon\\00_Major',
             subTexture = F.mediaPath .. 'Icon\\00_Minor',
+            sound = {
+                F.mediaPath .. 'Sound\\00_01',
+                F.mediaPath .. 'Sound\\00_02',
+                F.mediaPath .. 'Sound\\00_03',
+                F.mediaPath .. 'Sound\\00_04',
+                F.mediaPath .. 'Sound\\00_05',
+            },
             func = HideMainText,
         },
         {
@@ -254,6 +287,19 @@ do
                     end,
                 })
             end
+
+            tinsert(menuTable, {
+                text = "设置", isTitle = true, notCheckable = true,
+            })
+            tinsert(menuTable, {
+                text = "启用提示语音", isNotRadio = true,
+                func = function()
+                    self.db.EnableSound = not self.db.EnableSound
+                end,
+                checked = function()
+                    return self.db.EnableSound
+                end,
+            })
         end
 
         UIDropDownMenu_SetAnchor(menuFrame, 0, 0, 'TOPLEFT', self.mainFrame, 'TOPRIGHT')
@@ -274,6 +320,7 @@ do
             data.func(data)
         end
 
+        self.currentSkin = data
         self.db.Skin = index
     end
 end
@@ -400,6 +447,7 @@ do
     local defaultConfig = {
         DBVer = 1,
         Skin = 1,
+        EnableSound = false,
     }
 
     function F:ADDON_LOADED(_, name)
