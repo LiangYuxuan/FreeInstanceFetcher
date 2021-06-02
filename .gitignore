@@ -1,1 +1,4 @@
 .DS_Store
+
+Libs/*
+!Libs/Load_Libs.xml

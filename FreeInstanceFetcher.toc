@@ -10,5 +10,7 @@
 ## X-WoWI-ID: 25930
 ## X-Wago-ID: VBNBMzGx
 
+Libs\Load_Libs.xml
+
 FreeInstanceFetcher.lua
 CRC32.lua

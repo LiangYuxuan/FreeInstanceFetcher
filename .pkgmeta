@@ -1,5 +1,9 @@
 package-as: FreeInstanceFetcher
 
+externals:
+  Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
+  Libs/StdUi: https://github.com/kaminaris/StdUi.git
+
 ignore:
   - .luacheckrc
   - README.md
