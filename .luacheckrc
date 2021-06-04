@@ -1,6 +1,7 @@
 std = "lua51"
 max_line_length = false
 exclude_files = {
+	"Libs/",
 }
 ignore = {
 	"11./SLASH_.*", -- Setting an undefined (Slash handler) global variable
@@ -39,6 +40,7 @@ globals = {
 	"GameTooltip_SetDefaultAnchor",
 	"GameTooltip_UnitColor",
 	"InterfaceOptionsFrame_OpenToCategory",
+	"Item",
 	"SecureButton_GetModifiedUnit",
 	"StaticPopup_Show",
 	"StaticPopup_Hide",
