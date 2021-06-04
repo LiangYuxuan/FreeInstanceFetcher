@@ -72,17 +72,6 @@ local buttons = {
         end,
     },
     {
-        name = "清",
-        desc = "发送清除队列命令",
-        func = function()
-            for characterName, data in pairs(factionData) do
-                if data[3] then
-                    SendChatMessage(data[3], 'WHISPER', nil, characterName)
-                end
-            end
-        end,
-    },
-    {
         name = "英",
         desc = "发送转英雄命令",
         func = function()
@@ -128,6 +117,13 @@ local buttons = {
                     PlaySoundFile(F.currentSkin.sound[5], 'Master')
                 end
             end
+        end,
+    },
+    {
+        name = "本",
+        desc = "查看所有支持的副本",
+        func = function()
+            F:ToggleInstances()
         end,
     },
 }

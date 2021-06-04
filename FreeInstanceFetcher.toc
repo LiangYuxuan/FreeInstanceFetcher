@@ -14,3 +14,4 @@ Libs\Load_Libs.xml
 
 FreeInstanceFetcher.lua
 CRC32.lua
+Instances.lua
