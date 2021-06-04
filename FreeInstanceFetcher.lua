@@ -224,12 +224,26 @@ do
             name = "为了联盟",
             mainTexture = F.mediaPath .. 'Icon\\01_Major',
             subTexture = F.mediaPath .. 'Icon\\01_Minor',
+            sound = {
+                F.mediaPath .. 'Sound\\01_01.mp3',
+                F.mediaPath .. 'Sound\\01_02.mp3',
+                F.mediaPath .. 'Sound\\01_03.mp3',
+                F.mediaPath .. 'Sound\\01_04.mp3',
+                F.mediaPath .. 'Sound\\01_05.mp3',
+            },
             func = HideMainText,
         },
         {
             name = "为了部落",
             mainTexture = F.mediaPath .. 'Icon\\02_Major',
             subTexture = F.mediaPath .. 'Icon\\02_Minor',
+            sound = {
+                F.mediaPath .. 'Sound\\02_01.mp3',
+                F.mediaPath .. 'Sound\\02_02.mp3',
+                F.mediaPath .. 'Sound\\02_03.mp3',
+                F.mediaPath .. 'Sound\\02_04.mp3',
+                F.mediaPath .. 'Sound\\02_05.mp3',
+            },
             func = HideMainText,
         },
         {
@@ -258,6 +272,13 @@ do
             name = "小软爱你哟",
             mainTexture = F.mediaPath .. 'Icon\\06_Major',
             subTexture = F.mediaPath .. 'Icon\\00_Transparent',
+            sound = {
+                F.mediaPath .. 'Sound\\06_01.mp3',
+                F.mediaPath .. 'Sound\\06_02.mp3',
+                F.mediaPath .. 'Sound\\06_03.mp3',
+                F.mediaPath .. 'Sound\\06_04.mp3',
+                F.mediaPath .. 'Sound\\06_05.mp3',
+            },
             func = HideMainText,
         },
     }
