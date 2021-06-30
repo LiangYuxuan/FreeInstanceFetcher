@@ -153,6 +153,56 @@ function F:Print(...)
 end
 
 do
+    local StdUi = LibStub('StdUi')
+
+    local function ICCDiffCheck()
+        local _, _, difficultyID, _, _, _, _, instanceID = GetInstanceInfo()
+        if instanceID ~= 631 or difficultyID == 6 then
+            -- not in Icecrown Citadel or is 25 Player (Heroic)
+            return
+        end
+
+        for i = 1, GetNumSavedInstances() do
+            local link = GetSavedInstanceChatLink(i)
+            local instanceID, bossList = strmatch(link, ':(%d+):%d+:(%d+)\124h')
+            if instanceID == '631' then
+                -- Icecrown Citadel found
+                if bossList == '0' then
+                    -- new progress
+                    break
+                end
+                -- not new progress ignore
+                return
+            end
+        end
+
+        local RaidDifficulty = GetRaidDifficultyID()
+        local LegacyRaidDifficulty = GetLegacyRaidDifficultyID()
+        local isTenPlayer =
+            LegacyRaidDifficulty == DifficultyUtil.ID.Raid10Normal or LegacyRaidDifficulty == DifficultyUtil.ID.Raid10Heroic
+
+        local difficultyDisplayText =
+            GetDifficultyInfo(isTenPlayer and DifficultyUtil.ID.Raid10Normal or DifficultyUtil.ID.Raid25Normal) ..
+            GetDifficultyInfo(RaidDifficulty)
+
+        -- In Icecrown Citadel and difficulty is not 25 Player (Heroic) and
+        -- Icecrown Citadel new progress or not saved
+        StdUi:Dialog("警告", format(
+            "检测到你进入了冰冠堡垒，难度为：%s。\n" ..
+            "如果需要使用无敌CD，请按以下步骤操作：\n" ..
+            "1. 25人英雄难度自己击杀老一。\n" ..
+            "2. 用CD插件进组救绿龙。\n" ..
+            "3. 出本再进击杀巫妖王。",
+            difficultyDisplayText
+        ), 'FIF_ICC_WRONG_DIFF')
+    end
+
+    function F:PLAYER_ENTERING_WORLD()
+        C_Timer.After(1, ICCDiffCheck)
+    end
+end
+
+do
     local serverSuffix = '-' .. GetRealmName()
 
     function F:PARTY_INVITE_REQUEST(_, name)
@@ -500,6 +550,7 @@ do
             self:ApplySkin(self.db.Skin)
 
             self:RegisterEvent('PARTY_INVITE_REQUEST')
+            self:RegisterEvent('PLAYER_ENTERING_WORLD')
         end
     end
 end
