@@ -613,6 +613,17 @@ do
         local instanceName, bossName =
             self:GetInstanceAndBossName(instanceID, collectionData.bossIndex, collectionData.bossBit)
 
+        if not instanceName or not bossName then
+            local index = instanceID .. '-' .. (difficultyID or 0)
+            inProgress[index] = true
+            C_Timer.After(1, function()
+                inProgress[index] = nil
+                F:HandleCollection(instanceID, difficultyID, disabled, collectionData)
+                ExportData()
+            end)
+            return
+        end
+
         local info = {
             disabled = disabled,
             instanceLockLink = instanceLink[instanceID],
