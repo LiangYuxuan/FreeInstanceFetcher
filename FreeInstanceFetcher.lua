@@ -147,6 +147,21 @@ end
 
 F.playerFullName = F.playerName .. '-' .. GetRealmName()
 
+do
+    local locale = GetLocale()
+    if locale == 'koKR' then
+        F.STANDARD_TEXT_FONT = 'Fonts\\2002.TTF'
+    elseif locale == 'zhCN' then
+        F.STANDARD_TEXT_FONT = 'Fonts\\ARKai_T.ttf'
+    elseif locale == 'zhTW' then
+        F.STANDARD_TEXT_FONT = 'Fonts\\blei00d.TTF'
+    elseif locale == 'ruRU' then
+        F.STANDARD_TEXT_FONT = 'Fonts\\FRIZQT___CYR.TTF'
+    else
+        F.STANDARD_TEXT_FONT = 'Fonts\\FRIZQT__.TTF'
+    end
+end
+
 function F:Print(...)
     _G.DEFAULT_CHAT_FRAME:AddMessage(self.addonPrefix .. format(...))
 end
@@ -453,7 +468,7 @@ do
         mainFrame.texture:SetTexCoord(0, 1, 0, 1)
 
         mainFrame.text = mainFrame:CreateFontString(nil, 'OVERLAY')
-        mainFrame.text:SetFont(STANDARD_TEXT_FONT, 12, 'OUTLINE')
+        mainFrame.text:SetFont(self.STANDARD_TEXT_FONT, 12, 'OUTLINE')
         mainFrame.text:SetTextColor(1, 1, 1, 1)
         mainFrame.text:SetPoint('CENTER')
         mainFrame.text:SetJustifyH('CENTER')
@@ -487,7 +502,7 @@ do
             button.texture:SetTexCoord(0, 1, 0, 1)
 
             button.text = button:CreateFontString(nil, 'OVERLAY')
-            button.text:SetFont(STANDARD_TEXT_FONT, 14, 'OUTLINE')
+            button.text:SetFont(self.STANDARD_TEXT_FONT, 14, 'OUTLINE')
             button.text:SetTextColor(1, 1, 1, 1)
             button.text:SetPoint('CENTER')
             button.text:SetJustifyH('CENTER')
