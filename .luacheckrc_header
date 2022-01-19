@@ -9,6 +9,7 @@ ignore = {
 	-- "113/LE_.*", -- Accessing an undefined (Lua ENUM type) global variable
 	-- "113/NUM_LE_.*", -- Accessing an undefined (Lua ENUM type) global variable
 	"122/StaticPopupDialogs", -- Setting a read-only field of a global variable "StaticPopupDialogs"
+	"122/SlashCmdList", -- Setting a read-only field of a global variable "SlashCmdList"
 	-- "211", -- Unused local variable
 	"211/F", -- Unused local variable "F"
 	"211/L", -- Unused local variable "L"

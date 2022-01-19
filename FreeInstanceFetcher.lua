@@ -1,4 +1,6 @@
 local addonName, addon = ...
+local LDB = LibStub('LibDataBroker-1.1')
+local LDBI = LibStub('LibDBIcon-1.0')
 local StdUi = LibStub('StdUi')
 
 local faction = UnitFactionGroup('player')
@@ -126,6 +128,13 @@ local buttons = {
             F:ToggleInstances()
         end,
     },
+    {
+        name = "帮",
+        desc = "查看特殊CD使用步骤",
+        func = function()
+            F:ToggleSpecialSteps()
+        end,
+    },
 }
 
 F.addonAbbr = "fif"
@@ -165,6 +174,50 @@ end
 
 function F:Print(...)
     _G.DEFAULT_CHAT_FRAME:AddMessage(self.addonPrefix .. format(...))
+end
+
+function F:ToggleSpecialSteps()
+    if not self.specialWindow then
+        local window = StdUi:Window(UIParent, 700, 500, "特殊CD使用步骤")
+        window:SetPoint('CENTER')
+        window:Hide()
+        self.specialWindow = window
+
+        local editbox = StdUi:MultiLineBox(window, 600, 400, [[
+奥迪尔大剑幻化、达萨罗大工匠坐骑CD使用方法
+
+步骤1: 准备一个好基友(游戏朋友)待命状态，如果没有该CD将无法成功获取。
+步骤2: 需要染CD的号必走到FB门口后，然后点击插件[进]按钮。
+步骤3: 当CD君组你进组后，马上点击插件[团]按钮，此时CD君会将小队转化为团队。
+步骤4: 当团队转换成功后，请立即提议邀请你的朋友进组（待命的游戏玩家），该玩家请抓紧时间进组。
+步骤5: 此时你的团队里面有3个人(包括CD君在内)，你必须在CD号退组前迅速进本。
+步骤6: 当你进本后或者使用CD君30秒后，CD君会自动退组，此时你可以在集合石开团组人，成功完成上述步骤1-步骤5后，集合石进组的人才能和你保持一个进度，切记、切记。
+
+英雄ICC进度获取，无敌CD获取详细步骤
+
+步骤1: 拍卖行买40级以上的绷带(治疗职业请忽略)。
+步骤2: 自己在副本外调整FB难度为25人英雄模式。
+步骤3: 自己进英雄模式的副本把老一打了，然后出本。
+步骤4: 出本以后，使用CD插件进组，然后直接进副本，去救绿龙，用刚刚买来的绷带把绿龙奶满血，过了绿龙立马出本，不要动巫妖王，这是普通模式不掉坐骑。
+步骤5: 出本后不要调整FB难度，直接转身再进副本，通过传送器传送到上层，再去击杀巫妖王即可。
+
+[帷纱集市]尾王坐骑CD进度使用方法
+
+步骤1: 先跑到本门口。
+步骤2: 准备一个好基友或者好闺蜜登录游戏待命，自己的小号也行。
+步骤3: 您自己使用CD插件进组。
+步骤4: 当CD君组你进组后，请立即提议邀请你的朋友进组（待命的游戏玩家），该玩家请抓紧时间进组。
+步骤5: 当你提议邀请的人进组后，此刻你们小队应该是3个人，你立马进本(必须赶在CD号自动退组前进本)，否则染进度会失败。
+步骤6: 你进本后，CD号会自动退组。如果是你进本后CD号退组的，那么恭喜你的CD已经染好了，剩下的就是你自己集合石组人即可。如果你还未进本CD号就退组了，那么请将上面的步骤1、2、3、4、5在重新做一遍，直至成功。
+        ]])
+        editbox.editBox:Disable()
+        StdUi:GlueTop(editbox, window, 0, -50, 'TOP')
+    elseif self.specialWindow:IsShown() then
+        self.specialWindow:Hide()
+        return
+    end
+
+    self.specialWindow:Show()
 end
 
 do
@@ -353,7 +406,7 @@ do
         F:ApplySkin(arg1)
     end
 
-    function F:ShowSkinMenu()
+    function F:ShowConfigMenu(parent)
         if not menuTable then
             menuTable = {
                 { text = "皮肤", isTitle = true, notCheckable = true },
@@ -380,9 +433,40 @@ do
                     return self.db.EnableSound
                 end,
             })
+            tinsert(menuTable, {
+                text = "显示主界面", isNotRadio = true,
+                func = function()
+                    self.db.ShowMainFrame = not self.db.ShowMainFrame
+                    self.mainFrame:SetShown(self.db.ShowMainFrame)
+                    if not self.db.ShowMinimap then
+                        self:Print("你可以通过输入命令/%s show以重新显示主界面。", self.addonAbbr)
+                    end
+                end,
+                checked = function()
+                    return self.db.ShowMainFrame
+                end,
+            })
+            tinsert(menuTable, {
+                text = "显示小地图图标", isNotRadio = true,
+                func = function()
+                    self:ToggleMinimap()
+                end,
+                checked = function()
+                    return self.db.ShowMinimap
+                end,
+            })
+            tinsert(menuTable, {
+                text = "快速申请", isNotRadio = true, tooltipTitle = "启用左键点击小地图图标申请进组",
+                func = function()
+                    self.db.QuickAccess = not self.db.QuickAccess
+                end,
+                checked = function()
+                    return self.db.QuickAccess
+                end,
+            })
         end
 
-        UIDropDownMenu_SetAnchor(menuFrame, 0, 0, 'TOPLEFT', self.mainFrame, 'TOPRIGHT')
+        UIDropDownMenu_SetAnchor(menuFrame, 0, 0, 'TOPLEFT', parent, 'TOPRIGHT')
         EasyMenu(menuTable, menuFrame, nil, nil, nil, 'MENU')
     end
 
@@ -408,7 +492,7 @@ end
 do
     local function MainFrameOnClick(self, button)
         if button == 'RightButton' then
-            F:ShowSkinMenu()
+            F:ShowConfigMenu(self)
         else
             if self.subFrame:IsShown() then
                 self.subFrame:Hide()
@@ -528,7 +612,36 @@ do
         DBVer = 1,
         Skin = 1,
         EnableSound = false,
+        ShowMainFrame = true,
+        ShowMinimap = true,
+        QuickAccess = false,
     }
+
+    local brokerConfig = {
+        hide = false,
+    }
+
+    local function SlashCmdHandler(msg)
+        if msg == 'show' then
+            F.db.ShowMainFrame = true
+            F.mainFrame:Show()
+        elseif msg == 'hide' then
+            F.db.ShowMainFrame = false
+            F.mainFrame:Hide()
+        else
+            F:Print("\n    /%s show 显示界面\n    /%s hide 隐藏界面", F.addonAbbr, F.addonAbbr)
+        end
+    end
+
+    function F:ToggleMinimap()
+        F.db.ShowMinimap = not F.db.ShowMinimap
+        brokerConfig.hide = not F.db.ShowMinimap
+        if brokerConfig.hide then
+            LDBI:Hide(addonName)
+        else
+            LDBI:Show(addonName)
+        end
+    end
 
     function F:ADDON_LOADED(_, name)
         if name == addonName then
@@ -561,9 +674,36 @@ do
 
             self:BuildFrame()
             self:ApplySkin(self.db.Skin)
+            self.mainFrame:SetShown(F.db.ShowMainFrame)
 
             self:RegisterEvent('PARTY_INVITE_REQUEST')
             self:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+            brokerConfig.hide = not self.db.ShowMinimap
+            local broker = LDB:NewDataObject(addonName, {
+                type = 'launcher',
+                label = addonName,
+                icon = F.mediaPath .. 'Icon\\00_Major',
+                OnClick = function(self, button)
+                    if button == 'RightButton' then
+                        F:ShowConfigMenu(self)
+                    else
+                        if F.db.QuickAccess then
+                            buttons[1].func(F.mainFrame.subFrame.buttons[1])
+                        else
+                            F.db.ShowMainFrame = not F.mainFrame:IsShown()
+                            F.mainFrame:SetShown(F.db.ShowMainFrame)
+                        end
+                    end
+                end,
+            })
+            LDBI:Register(addonName, broker, brokerConfig)
+
+            local upperAddonName = strupper(addonName)
+            _G['SLASH_' .. upperAddonName .. '1'] = '/' .. addonName
+            _G['SLASH_' .. upperAddonName .. '2'] = '/' .. self.addonAbbr
+
+            SlashCmdList[upperAddonName] = SlashCmdHandler
         end
     end
 end
