@@ -1,4 +1,5 @@
 local addonName, addon = ...
+local StdUi = LibStub('StdUi')
 
 local faction = UnitFactionGroup('player')
 if not faction then return end
@@ -42,7 +43,7 @@ local buttons = {
 
             CooldownFrame_Set(self.cooldown, now, 30, 1)
 
-            local postfix = '请组我-公益插件公开免费下载'
+            local postfix = '请组我'
 
             local iv = random(1, 0xFFFF)
             local quick = bit.bxor(
@@ -167,8 +168,6 @@ function F:Print(...)
 end
 
 do
-    local StdUi = LibStub('StdUi')
-
     local function ICCDiffCheck()
         local _, _, difficultyID, _, _, _, _, instanceID = GetInstanceInfo()
         if instanceID ~= 631 or difficultyID == 6 then
@@ -202,8 +201,8 @@ do
         -- In Icecrown Citadel and difficulty is not 25 Player (Heroic) and
         -- Icecrown Citadel new progress or not saved
         StdUi:Dialog("警告", format(
-            "检测到你进入了冰冠堡垒，难度为：%s。\n" ..
-            "如果需要使用无敌CD，请按以下步骤操作：\n" ..
+            "检测到你进入了冰冠堡垒，难度为: %s。\n" ..
+            "如果需要使用无敌CD，请按以下步骤操作: \n" ..
             "1. 25人英雄难度自己击杀老一。\n" ..
             "2. 用CD插件进组救绿龙。\n" ..
             "3. 出本再进击杀巫妖王。",
@@ -458,8 +457,8 @@ do
 
         mainFrame.desc = self.addonLocaleName .. self.addonVersion .. "\n" ..
             "魔兽世界第一幻化交流群公益插件，公开免费下载。" .. "\n" ..
-            "下载地址：https://bbs.nga.cn/read.php?tid=22958219" .. "\n" ..
-            "Code By Rhythm w/ <3" .. "\n" ..
+            "下载地址: https://bbs.nga.cn/read.php?tid=22958219" .. "\n" ..
+            "Code by Rhythm w/ <3" .. "\n" ..
             "故障处理微信: wowermaster"
 
         mainFrame.texture = mainFrame:CreateTexture('BACKGROUND')
