@@ -24,6 +24,40 @@ local database = {
 local factionData = database[faction]
 if not factionData then return end
 
+-- Lua functions
+local _G = _G
+local bit_lshift, bit_bor, bit_bxor = bit.lshift, bit.bor, bit.bxor
+local format, gsub, ipairs, pairs, random, select = format, gsub, ipairs, pairs, random, select
+local strmatch, strupper, tinsert, type = strmatch, strupper, tinsert, type
+
+-- WoW API / Variables
+local AcceptGroup = AcceptGroup
+local CreateFrame = CreateFrame
+local GetDifficultyInfo = GetDifficultyInfo
+local GetGameTime = GetGameTime
+local GetInstanceInfo = GetInstanceInfo
+local GetLegacyRaidDifficultyID = GetLegacyRaidDifficultyID
+local GetNumSavedInstances = GetNumSavedInstances
+local GetRaidDifficultyID = GetRaidDifficultyID
+local GetSavedInstanceChatLink = GetSavedInstanceChatLink
+local GetTime = GetTime
+local IsInGroup = IsInGroup
+local PlaySoundFile = PlaySoundFile
+local SendChatMessage = SendChatMessage
+local UnitClass = UnitClass
+
+local C_Timer_After = C_Timer.After
+local CooldownFrame_Set = CooldownFrame_Set
+local UIDropDownMenu_SetAnchor = UIDropDownMenu_SetAnchor
+local StaticPopup_Hide = StaticPopup_Hide
+
+local DifficultyUtil_ID_Raid10Normal = DifficultyUtil.ID.Raid10Normal
+local DifficultyUtil_ID_Raid10Heroic = DifficultyUtil.ID.Raid10Heroic
+local DifficultyUtil_ID_Raid25Normal = DifficultyUtil.ID.Raid25Normal
+local LE_PARTY_CATEGORY_HOME = LE_PARTY_CATEGORY_HOME
+
+-- GLOBALS: FIFConfig
+
 -- AddOn Engine
 local F = CreateFrame('Frame')
 F:SetScript('OnEvent', function(self, event, ...)
@@ -48,8 +82,8 @@ local buttons = {
             local postfix = '请组我'
 
             local iv = random(1, 0xFFFF)
-            local quick = bit.bxor(
-                bit.bor(bit.lshift(iv, 16), iv),
+            local quick = bit_bxor(
+                bit_bor(bit_lshift(iv, 16), iv),
                 F:CRC32(gsub(F.mainFrame.desc, F.addonLocaleName .. F.addonVersion, addonName))
             )
 
@@ -178,7 +212,7 @@ end
 
 function F:ToggleSpecialSteps()
     if not self.specialWindow then
-        local window = StdUi:Window(UIParent, 700, 500, "特殊CD使用步骤")
+        local window = StdUi:Window(_G.UIParent, 700, 500, "特殊CD使用步骤")
         window:SetPoint('CENTER')
         window:Hide()
         self.specialWindow = window
@@ -245,10 +279,10 @@ do
         local RaidDifficulty = GetRaidDifficultyID()
         local LegacyRaidDifficulty = GetLegacyRaidDifficultyID()
         local isTenPlayer =
-            LegacyRaidDifficulty == DifficultyUtil.ID.Raid10Normal or LegacyRaidDifficulty == DifficultyUtil.ID.Raid10Heroic
+            LegacyRaidDifficulty == DifficultyUtil_ID_Raid10Normal or LegacyRaidDifficulty == DifficultyUtil_ID_Raid10Heroic
 
         local difficultyDisplayText =
-            GetDifficultyInfo(isTenPlayer and DifficultyUtil.ID.Raid10Normal or DifficultyUtil.ID.Raid25Normal) ..
+            GetDifficultyInfo(isTenPlayer and DifficultyUtil_ID_Raid10Normal or DifficultyUtil_ID_Raid25Normal) ..
             GetDifficultyInfo(RaidDifficulty)
 
         -- In Icecrown Citadel and difficulty is not 25 Player (Heroic) and
@@ -264,7 +298,7 @@ do
     end
 
     function F:PLAYER_ENTERING_WORLD()
-        C_Timer.After(1, ICCDiffCheck)
+        C_Timer_After(1, ICCDiffCheck)
     end
 end
 
@@ -400,7 +434,7 @@ do
     }
 
     local menuTable
-    local menuFrame = CreateFrame('Frame', addonName .. 'MenuFrame', UIParent, 'UIDropDownMenuTemplate')
+    local menuFrame = CreateFrame('Frame', addonName .. 'MenuFrame', _G.UIParent, 'UIDropDownMenuTemplate')
 
     local function Apply(_, arg1)
         F:ApplySkin(arg1)
@@ -467,7 +501,7 @@ do
         end
 
         UIDropDownMenu_SetAnchor(menuFrame, 0, 0, 'TOPLEFT', parent, 'TOPRIGHT')
-        EasyMenu(menuTable, menuFrame, nil, nil, nil, 'MENU')
+        _G.EasyMenu(menuTable, menuFrame, nil, nil, nil, 'MENU')
     end
 
     function F:ApplySkin(index)
@@ -504,18 +538,18 @@ do
 
     local function ButtonOnEnter(self)
         if self.desc then
-            GameTooltip:Hide()
-            GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
-            GameTooltip:ClearLines()
+            _G.GameTooltip:Hide()
+            _G.GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+            _G.GameTooltip:ClearLines()
 
-            GameTooltip:AddLine(self.desc, 1, 1, 1)
+            _G.GameTooltip:AddLine(self.desc, 1, 1, 1)
 
-            GameTooltip:Show()
+            _G.GameTooltip:Show()
         end
     end
 
     local function ButtonOnLeave()
-        GameTooltip:Hide()
+        _G.GameTooltip:Hide()
     end
 
     local MAIN_BUTTON_SIZE = 48
@@ -524,7 +558,7 @@ do
     local SUB_BUTTON_SPACING = 12
 
     function F:BuildFrame()
-        local mainFrame = CreateFrame('Button', addonName .. 'Frame', UIParent)
+        local mainFrame = CreateFrame('Button', addonName .. 'Frame', _G.UIParent)
         mainFrame:SetClampedToScreen(true)
         mainFrame:SetMovable(true)
         mainFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
@@ -703,7 +737,7 @@ do
             _G['SLASH_' .. upperAddonName .. '1'] = '/' .. addonName
             _G['SLASH_' .. upperAddonName .. '2'] = '/' .. self.addonAbbr
 
-            SlashCmdList[upperAddonName] = SlashCmdHandler
+            _G.SlashCmdList[upperAddonName] = SlashCmdHandler
         end
     end
 end
