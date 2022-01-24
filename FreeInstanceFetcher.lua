@@ -186,7 +186,7 @@ F.playerName = UnitName('player')
 -- 'player' workaround
 if strmatch(F.playerName, '^Player') then
     local suffix = strsub(F.playerName, 7)
-    F.playerName = 'player' .. strupper(suffix)
+    F.playerName = 'player' .. strlower(suffix)
 end
 
 F.playerFullName = F.playerName .. '-' .. GetRealmName()
