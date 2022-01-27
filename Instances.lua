@@ -778,6 +778,21 @@ do
 
                 ExportData()
             end)
+
+            C_Timer_After(2, function()
+                if inProgress[item] then
+                    -- timeout
+                    inProgress[item] = nil
+
+                    itemLink = select(2, GetItemInfo(collectionData.itemID))
+                    info.collected = isCollected and 136814 or info.collected
+                    info.collection = itemLink or collectionData.itemID
+                    info.itemID = collectionData.itemID
+                    tinsert(data, info)
+
+                    ExportData()
+                end
+            end)
             return
         end
 
