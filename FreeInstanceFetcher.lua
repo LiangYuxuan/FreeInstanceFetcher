@@ -658,12 +658,14 @@ do
     local function SlashCmdHandler(msg)
         if msg == 'show' then
             F.db.ShowMainFrame = true
+            F.mainFrame:ClearAllPoints()
+            F.mainFrame:SetPoint('TOPLEFT', 10, -100)
             F.mainFrame:Show()
         elseif msg == 'hide' then
             F.db.ShowMainFrame = false
             F.mainFrame:Hide()
         else
-            F:Print("\n    /%s show 显示界面\n    /%s hide 隐藏界面", F.addonAbbr, F.addonAbbr)
+            F:Print("\n    /%s show 重置界面位置并显示界面\n    /%s hide 隐藏界面", F.addonAbbr, F.addonAbbr)
         end
     end
 
@@ -708,7 +710,7 @@ do
 
             self:BuildFrame()
             self:ApplySkin(self.db.Skin)
-            self.mainFrame:SetShown(F.db.ShowMainFrame)
+            self.mainFrame:SetShown(self.db.ShowMainFrame)
 
             self:RegisterEvent('PARTY_INVITE_REQUEST')
             self:RegisterEvent('PLAYER_ENTERING_WORLD')
