@@ -470,11 +470,7 @@ do
             tinsert(menuTable, {
                 text = "显示主界面", isNotRadio = true,
                 func = function()
-                    self.db.ShowMainFrame = not self.db.ShowMainFrame
-                    self.mainFrame:SetShown(self.db.ShowMainFrame)
-                    if not self.db.ShowMinimap then
-                        self:Print("你可以通过输入命令/%s show以重新显示主界面。", self.addonAbbr)
-                    end
+                    self:ToggleMainFrame()
                 end,
                 checked = function()
                     return self.db.ShowMainFrame
@@ -657,21 +653,46 @@ do
 
     local function SlashCmdHandler(msg)
         if msg == 'show' then
-            F.db.ShowMainFrame = true
+            F:ToggleMainFrame(true)
+
+            -- reset position
             F.mainFrame:ClearAllPoints()
             F.mainFrame:SetPoint('TOPLEFT', 10, -100)
             F.mainFrame:Show()
         elseif msg == 'hide' then
-            F.db.ShowMainFrame = false
-            F.mainFrame:Hide()
+            F:ToggleMainFrame(false)
         else
             F:Print("\n    /%s show 重置界面位置并显示界面\n    /%s hide 隐藏界面", F.addonAbbr, F.addonAbbr)
         end
     end
 
+    function F:ToggleMainFrame(target)
+        if type(target) == 'boolean' then
+            if not self.db.ShowMinimap and not target then
+                F:Print('无法同时隐藏主界面和小地图按钮')
+                return
+            end
+
+            self.db.ShowMainFrame = target
+        else
+            if not self.db.ShowMinimap and self.db.ShowMainFrame then
+                F:Print('无法同时隐藏主界面和小地图按钮')
+                return
+            end
+
+            self.db.ShowMainFrame = not self.db.ShowMainFrame
+        end
+        self.mainFrame:SetShown(self.db.ShowMainFrame)
+    end
+
     function F:ToggleMinimap()
-        F.db.ShowMinimap = not F.db.ShowMinimap
-        brokerConfig.hide = not F.db.ShowMinimap
+        if not self.db.ShowMainFrame and self.db.ShowMinimap then
+            F:Print('无法同时隐藏主界面和小地图按钮')
+            return
+        end
+
+        self.db.ShowMinimap = not self.db.ShowMinimap
+        brokerConfig.hide = not self.db.ShowMinimap
         if brokerConfig.hide then
             LDBI:Hide(addonName)
         else
@@ -727,8 +748,7 @@ do
                         if F.db.QuickAccess then
                             buttons[1].func(F.mainFrame.subFrame.buttons[1])
                         else
-                            F.db.ShowMainFrame = not F.mainFrame:IsShown()
-                            F.mainFrame:SetShown(F.db.ShowMainFrame)
+                            F:ToggleMainFrame()
                         end
                     end
                 end,
