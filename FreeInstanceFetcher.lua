@@ -72,6 +72,11 @@ local buttons = {
         name = "进",
         desc = "发送进组密语",
         func = function(self)
+            if F:IsSendInvStart() then
+                F:Print("进组密语正在发送中")
+                return
+            end
+
             local now = GetTime()
             if F.prevInv and F.prevInv > now - 30 then
                 F:Print("你每30秒只能发送一次进组密语")
@@ -81,28 +86,7 @@ local buttons = {
 
             CooldownFrame_Set(self.cooldown, now, 30, 1)
 
-            local postfix = '请组我'
-
-            local iv = random(1, 0xFFFF)
-            local quick = bit_bxor(
-                bit_bor(bit_lshift(iv, 16), iv),
-                F:CRC32(gsub(F.mainFrame.desc, F.addonLocaleName .. F.addonVersion, addonName))
-            )
-
-            local hour = GetGameTime()
-            local hourText = format('%.2d', hour)
-            local prefix = 'V201' .. hourText
-            local final = F:CRC32(prefix .. F.playerFullName .. F:ToHex32(quick) .. postfix)
-
-            local dynamic = prefix .. format('%.4X', iv) .. F:ToHex32(final) .. postfix
-
-            for characterName, data in pairs(factionData) do
-                if dynamic and data[1] then
-                    SendChatMessage(dynamic, 'WHISPER', nil, characterName)
-                elseif data[2] then
-                    SendChatMessage(data[2], 'WHISPER', nil, characterName)
-                end
-            end
+            F:StartSendInv()
 
             if F.db.EnableSound and F.currentSkin and F.currentSkin.sound and F.currentSkin.sound[1] then
                 PlaySoundFile(F.currentSkin.sound[1], 'Master')
@@ -309,6 +293,100 @@ do
 end
 
 do
+    local interval = 1
+
+    local timeFrame = CreateFrame('Frame')
+    timeFrame:Hide()
+    timeFrame:SetScript('OnUpdate', function(self, elapsed)
+        self.elapsed = self.elapsed + elapsed
+        if self.elapsed < interval then return end
+
+        self.elapsed = self.elapsed - interval
+
+        local characterName, data = next(self.queue, self.prev)
+        self.prev = characterName
+
+        if not characterName then
+            -- end of the list
+            self:Hide()
+            return
+        end
+
+        if self.dynamic and self.dynamicIndex and data[self.dynamicIndex] then
+            SendChatMessage(self.dynamic, 'WHISPER', nil, characterName)
+        else
+            SendChatMessage(self.index and data[self.index] or data, 'WHISPER', nil, characterName)
+        end
+
+        if self.storeQueue then
+            self.storeQueue[characterName] = self.storeIndex and data[self.storeIndex] or data
+        end
+    end)
+    timeFrame:SetScript('OnShow', function(self)
+        self.prev = nil
+        self.elapsed = interval -- make it work at the very beginning
+    end)
+
+    local function StartTimer(queue, index, dynamic, dynamicIndex, storeQueue, storeIndex)
+        timeFrame:Hide()
+
+        timeFrame.queue = queue
+        timeFrame.index = index
+        timeFrame.dynamic = dynamic
+        timeFrame.dynamicIndex = dynamicIndex
+        timeFrame.storeQueue = storeQueue
+        timeFrame.storeIndex = storeIndex
+        timeFrame:Show()
+    end
+
+    local function StopTimer()
+        timeFrame:Hide()
+    end
+
+    local function IsTimerStarted()
+        return timeFrame:IsShown()
+    end
+
+    -- used to store characters touched
+    local pendingClear = {}
+
+    function F:StartSendInv()
+        wipe(pendingClear)
+
+        local postfix = '请组我'
+
+        local iv = random(1, 0xFFFF)
+        local quick = bit_bxor(
+            bit_bor(bit_lshift(iv, 16), iv),
+            self:CRC32(gsub(self.mainFrame.desc, self.addonLocaleName .. self.addonVersion, addonName))
+        )
+
+        local hour = GetGameTime()
+        local hourText = format('%.2d', hour)
+        local prefix = 'V201' .. hourText
+        local final = self:CRC32(prefix .. self.playerFullName .. self:ToHex32(quick) .. postfix)
+
+        local dynamic = prefix .. format('%.4X', iv) .. self:ToHex32(final) .. postfix
+
+        StartTimer(factionData, 2, dynamic, 1, pendingClear, 3)
+    end
+
+    function F:StopSendInv()
+        StopTimer()
+    end
+
+    function F:IsSendingInv()
+        return IsTimerStarted()
+    end
+
+    function F:SendQuitExcept(name)
+        pendingClear[name] = nil
+
+        StartTimer(pendingClear)
+    end
+end
+
+do
     local serverSuffix = '-' .. GetRealmName()
 
     function F:PARTY_INVITE_REQUEST(_, name)
@@ -320,14 +398,11 @@ do
 
         AcceptGroup()
 
+        F:StopSendInv()
+        F:SendQuitExcept(name)
+
         if self.db.EnableSound and self.currentSkin and self.currentSkin.sound and self.currentSkin.sound[2] then
             PlaySoundFile(self.currentSkin.sound[2], 'Master')
-        end
-
-        for characterName, data in pairs(factionData) do
-            if characterName ~= name and data[3] then
-                SendChatMessage(data[3], 'WHISPER', nil, characterName)
-            end
         end
 
         -- ui tweak
