@@ -29,8 +29,8 @@ if not factionData then return end
 -- Lua functions
 local _G = _G
 local bit_lshift, bit_bor, bit_bxor = bit.lshift, bit.bor, bit.bxor
-local format, gsub, ipairs, pairs, random, select = format, gsub, ipairs, pairs, random, select
-local strmatch, strupper, tinsert, type = strmatch, strupper, tinsert, type
+local format, gsub, ipairs, next, pairs, random = format, gsub, ipairs, next, pairs, random
+local select, strmatch, strupper, tinsert, type, wipe = select, strmatch, strupper, tinsert, type, wipe
 
 -- WoW API / Variables
 local AcceptGroup = AcceptGroup
