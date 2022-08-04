@@ -206,9 +206,9 @@ function F:ToggleSpecialSteps()
         local editbox = StdUi:MultiLineBox(window, 600, 400, [[
 重要提醒: 插件版本更新，请使用推荐的地址下载，NGA、百度网盘、黑盒工坊、CurseForge等都可以更新，|cFFFF0000不要使用EUI更新器更新|r，有可能导致插件部分功能无法使用。
 排队问题: 非周四时间如果排队超过10请微信联系我，周四排队超过30也可以私信我，大概率是卡队列了。
-问题咨询: 微信 (wowermaster) ===羔羊===
+问题咨询: 微信 (wower_director) ===羔羊===
 
-【奥迪尔】大剑幻化、【达萨罗】大工匠坐骑CD获取方法
+【奥迪尔】大剑幻化、【达萨罗】大工匠、【统御圣所】九武神坐骑CD获取方法
 
 步骤1: 准备一个好友(游戏朋友)或者双开小号，处于随时待命状态，否则该CD将无法成功获取。
 步骤2: 将需要染CD的号开到FB门口且小号就绪后，请点击插件[进]按钮排队进组。
@@ -645,7 +645,7 @@ do
             "魔兽世界第一幻化交流群公益插件，公开免费下载。" .. "\n" ..
             "下载地址: https://bbs.nga.cn/read.php?tid=22958219" .. "\n" ..
             "Code by Rhythm w/ <3" .. "\n" ..
-            "故障处理微信: wowermaster"
+            "故障处理微信: wower_director"
 
         mainFrame.texture = mainFrame:CreateTexture('BACKGROUND')
         mainFrame.texture:ClearAllPoints()
