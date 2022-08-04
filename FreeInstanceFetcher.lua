@@ -72,7 +72,7 @@ local buttons = {
         name = "进",
         desc = "发送进组密语",
         func = function(self)
-            if F:IsSendInvStart() then
+            if F:IsSendingInv() then
                 F:Print("进组密语正在发送中")
                 return
             end
