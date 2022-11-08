@@ -293,7 +293,7 @@ do
 end
 
 do
-    local interval = 1
+    local interval = 2
 
     local timeFrame = CreateFrame('Frame')
     timeFrame:Hide()
