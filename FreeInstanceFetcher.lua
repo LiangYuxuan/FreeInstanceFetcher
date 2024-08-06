@@ -51,7 +51,7 @@ local UnitClass = UnitClass
 
 local C_Timer_After = C_Timer.After
 local CooldownFrame_Set = CooldownFrame_Set
-local UIDropDownMenu_SetAnchor = UIDropDownMenu_SetAnchor
+local MenuUtil_CreateContextMenu = MenuUtil.CreateContextMenu
 local StaticPopup_Hide = StaticPopup_Hide
 
 local DifficultyUtil_ID_Raid10Normal = DifficultyUtil.ID.Raid10Normal
@@ -517,62 +517,44 @@ do
         },
     }
 
-    local menuTable
-    local menuFrame = CreateFrame('Frame', addonName .. 'MenuFrame', _G.UIParent, 'UIDropDownMenuTemplate')
+    local function isSkinSelected(index)
+        return index == F.db.Skin
+    end
 
-    local function Apply(_, arg1)
-        F:ApplySkin(arg1)
+    local function setSkinSelected(index)
+        F:ApplySkin(index)
+    end
+
+    local function isOptionEnabled(option)
+        return F.db[option]
+    end
+
+    local function toggleOption(option)
+        if option == 'ShowMinimap' then
+            F:ToggleMinimap()
+            return
+        end
+
+        F.db[option] = not F.db[option]
+    end
+
+    local function GeneratorFunction(_, rootDescription)
+        rootDescription:CreateTitle("皮肤")
+
+        for index, data in ipairs(skinList) do
+            rootDescription:CreateRadio(data.name, isSkinSelected, setSkinSelected, index)
+        end
+
+        rootDescription:CreateDivider()
+        rootDescription:CreateTitle("设置")
+
+        rootDescription:CreateCheckButton("启用提示语音", isOptionEnabled, toggleOption, 'EnableSound')
+        rootDescription:CreateCheckButton("显示小地图图标", isOptionEnabled, toggleOption, 'ShowMinimap')
+        rootDescription:CreateCheckButton("快速申请", isOptionEnabled, toggleOption, 'QuickAccess')
     end
 
     function F:ShowConfigMenu(parent)
-        if not menuTable then
-            menuTable = {
-                { text = "皮肤", isTitle = true, notCheckable = true },
-            }
-            for index, data in ipairs(skinList) do
-                local currentIndex = index
-                tinsert(menuTable, {
-                    text = data.name, arg1 = currentIndex, func = Apply,
-                    checked = function()
-                        return currentIndex == self.db.Skin
-                    end,
-                })
-            end
-
-            tinsert(menuTable, {
-                text = "设置", isTitle = true, notCheckable = true,
-            })
-            tinsert(menuTable, {
-                text = "启用提示语音", isNotRadio = true,
-                func = function()
-                    self.db.EnableSound = not self.db.EnableSound
-                end,
-                checked = function()
-                    return self.db.EnableSound
-                end,
-            })
-            tinsert(menuTable, {
-                text = "显示小地图图标", isNotRadio = true,
-                func = function()
-                    self:ToggleMinimap()
-                end,
-                checked = function()
-                    return self.db.ShowMinimap
-                end,
-            })
-            tinsert(menuTable, {
-                text = "快速申请", isNotRadio = true, tooltipTitle = "启用左键点击小地图图标申请进组",
-                func = function()
-                    self.db.QuickAccess = not self.db.QuickAccess
-                end,
-                checked = function()
-                    return self.db.QuickAccess
-                end,
-            })
-        end
-
-        UIDropDownMenu_SetAnchor(menuFrame, 0, 0, 'TOPLEFT', parent, 'TOPRIGHT')
-        _G.EasyMenu(menuTable, menuFrame, nil, nil, nil, 'MENU')
+        MenuUtil_CreateContextMenu(parent, GeneratorFunction)
     end
 
     function F:ApplySkin(index)
