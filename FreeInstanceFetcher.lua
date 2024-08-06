@@ -255,8 +255,9 @@ do
 
         for i = 1, GetNumSavedInstances() do
             local link = GetSavedInstanceChatLink(i)
-            local instanceID, bossList = strmatch(link, ':(%d+):%d+:(%d+)\124h')
-            if instanceID == '631' then
+            ---@cast link string
+            local id, bossList = strmatch(link, ':(%d+):%d+:(%d+)\124h')
+            if id == '631' then
                 -- Icecrown Citadel found
                 if bossList == '0' then
                     -- new progress
@@ -272,6 +273,7 @@ do
         local isTenPlayer =
             LegacyRaidDifficulty == DifficultyUtil_ID_Raid10Normal or LegacyRaidDifficulty == DifficultyUtil_ID_Raid10Heroic
 
+        ---@cast RaidDifficulty number
         local difficultyDisplayText =
             GetDifficultyInfo(isTenPlayer and DifficultyUtil_ID_Raid10Normal or DifficultyUtil_ID_Raid25Normal) ..
             GetDifficultyInfo(RaidDifficulty)
