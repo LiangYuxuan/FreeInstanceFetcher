@@ -586,7 +586,7 @@ do
             button.texture:SetTexture(data.subTexture)
         end
         if data.func then
-            data.func(data)
+            data.func()
         end
 
         self.currentSkin = data
