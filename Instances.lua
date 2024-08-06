@@ -8,6 +8,7 @@ local format, ipairs, next, pairs, select, strmatch = format, ipairs, next, pair
 local tinsert, tonumber, wipe = tinsert, tonumber, wipe
 
 -- WoW API / Variables
+local C_Item_GetItemInfo = C_Item.GetItemInfo
 local C_MountJournal_GetMountInfoByID = C_MountJournal.GetMountInfoByID
 local C_PetJournal_FindPetIDByName = C_PetJournal.FindPetIDByName
 local C_PetJournal_GetPetInfoByItemID = C_PetJournal.GetPetInfoByItemID
@@ -17,7 +18,6 @@ local C_TransmogCollection_GetItemInfo = C_TransmogCollection.GetItemInfo
 local GetAchievementInfo = GetAchievementInfo
 local GetAchievementLink = GetAchievementLink
 local GetDifficultyInfo = GetDifficultyInfo
-local GetItemInfo = GetItemInfo
 local GetNumSavedInstances = GetNumSavedInstances
 local GetSavedInstanceChatLink = GetSavedInstanceChatLink
 local GetSavedInstanceInfo = GetSavedInstanceInfo
@@ -763,7 +763,7 @@ do
 
         if not showCollected and isCollected then return end
 
-        local itemLink = select(2, GetItemInfo(collectionData.itemID))
+        local itemLink = select(2, C_Item_GetItemInfo(collectionData.itemID))
         if not itemLink then
             local item = Item:CreateFromItemID(collectionData.itemID)
             inProgress[item] = true
@@ -771,7 +771,7 @@ do
             item:ContinueOnItemLoad(function()
                 inProgress[item] = nil
 
-                itemLink = select(2, GetItemInfo(collectionData.itemID))
+                itemLink = select(2, C_Item_GetItemInfo(collectionData.itemID))
                 info.collected = isCollected and 136814 or info.collected
                 info.collection = itemLink
                 info.itemID = collectionData.itemID
@@ -785,7 +785,7 @@ do
                     -- timeout
                     inProgress[item] = nil
 
-                    itemLink = select(2, GetItemInfo(collectionData.itemID))
+                    itemLink = select(2, C_Item_GetItemInfo(collectionData.itemID))
                     info.collected = isCollected and 136814 or info.collected
                     info.collection = itemLink or collectionData.itemID
                     info.itemID = collectionData.itemID

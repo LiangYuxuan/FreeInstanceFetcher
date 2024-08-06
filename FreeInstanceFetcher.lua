@@ -161,7 +161,7 @@ local buttons = {
 F.addonAbbr = "fif"
 F.addonPrefix = "\124cFF70B8FF" .. addonName .. "\124r: "
 F.addonLocaleName = "\124cFF70B8FF便利CD获取\124r: "
-F.addonVersion = GetAddOnMetadata(addonName, 'Version')
+F.addonVersion = C_AddOns.GetAddOnMetadata(addonName, 'Version')
 --@debug@
 if F.addonVersion == '@project-version@' then
     F.addonVersion = 'Dev'
