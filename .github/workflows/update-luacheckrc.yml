@@ -1,4 +1,4 @@
-name: Update .luacheckrc
+name: update-luacheckrc
 
 on:
   workflow_dispatch:
@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Generate new .luacheckrc
-        uses: LiangYuxuan/action-generate-luacheckrc@v2
+        uses: LiangYuxuan/action-generate-luacheckrc@v4
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v6
         with:
           title: Update .luacheckrc
           commit-message: "test: update .luacheckrc"
