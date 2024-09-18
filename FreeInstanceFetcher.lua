@@ -548,9 +548,9 @@ do
         rootDescription:CreateDivider()
         rootDescription:CreateTitle("设置")
 
-        rootDescription:CreateCheckButton("启用提示语音", isOptionEnabled, toggleOption, 'EnableSound')
-        rootDescription:CreateCheckButton("显示小地图图标", isOptionEnabled, toggleOption, 'ShowMinimap')
-        rootDescription:CreateCheckButton("快速申请", isOptionEnabled, toggleOption, 'QuickAccess')
+        rootDescription:CreateCheckbox("启用提示语音", isOptionEnabled, toggleOption, 'EnableSound')
+        rootDescription:CreateCheckbox("显示小地图图标", isOptionEnabled, toggleOption, 'ShowMinimap')
+        rootDescription:CreateCheckbox("快速申请", isOptionEnabled, toggleOption, 'QuickAccess')
     end
 
     function F:ShowConfigMenu(parent)
