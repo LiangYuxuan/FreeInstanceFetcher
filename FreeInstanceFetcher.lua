@@ -394,6 +394,8 @@ do
     local serverSuffix = '-' .. GetRealmName()
 
     function F:PARTY_INVITE_REQUEST(_, name)
+        if IsInInstance() then return end
+
         if factionData[name .. serverSuffix] then
             name = name .. serverSuffix
         elseif not factionData[name] then
