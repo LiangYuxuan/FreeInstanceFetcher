@@ -73,16 +73,16 @@ addon[1] = F
 local buttons = {
     {
         name = "进",
-        desc = "发送进组密语",
+        desc = "发送进组申请",
         func = function(self)
             if F:IsSendingInv() then
-                F:Print("进组密语正在发送中")
+                F:Print("进组申请正在发送中")
                 return
             end
 
             local now = GetTime()
             if F.prevInv and F.prevInv > now - 30 then
-                F:Print("你每30秒只能发送一次进组密语")
+                F:Print("你每30秒只能发送一次进组申请")
                 return
             end
             F.prevInv = now
@@ -317,10 +317,14 @@ do
             return
         end
 
-        if self.dynamic and self.dynamicIndex and data[self.dynamicIndex] then
-            SendChatMessage(self.dynamic, 'WHISPER', nil, characterName)
+        if self.useInvite then
+            C_PartyInfo.ConfirmInviteUnit(characterName)
         else
-            SendChatMessage(self.index and data[self.index] or data, 'WHISPER', nil, characterName)
+            if self.dynamic and self.dynamicIndex and data[self.dynamicIndex] then
+                SendChatMessage(self.dynamic, 'WHISPER', nil, characterName)
+            else
+                SendChatMessage(self.index and data[self.index] or data, 'WHISPER', nil, characterName)
+            end
         end
 
         if self.storeQueue then
@@ -332,7 +336,7 @@ do
         self.elapsed = interval -- make it work at the very beginning
     end)
 
-    local function StartTimer(queue, index, dynamic, dynamicIndex, storeQueue, storeIndex)
+    local function StartTimer(queue, index, dynamic, dynamicIndex, storeQueue, storeIndex, useInvite)
         timeFrame:Hide()
 
         timeFrame.queue = queue
@@ -341,6 +345,7 @@ do
         timeFrame.dynamicIndex = dynamicIndex
         timeFrame.storeQueue = storeQueue
         timeFrame.storeIndex = storeIndex
+        timeFrame.useInvite = useInvite
         timeFrame:Show()
     end
 
@@ -373,7 +378,7 @@ do
 
         local dynamic = prefix .. format('%.4X', iv) .. self:ToHex32(final) .. postfix
 
-        StartTimer(factionData, 2, dynamic, 1, pendingClear, 3)
+        StartTimer(factionData, 2, dynamic, 1, pendingClear, 3, true)
     end
 
     function F:StopSendInv()
