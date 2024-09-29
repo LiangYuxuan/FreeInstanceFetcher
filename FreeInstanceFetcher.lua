@@ -46,6 +46,7 @@ local GetRaidDifficultyID = GetRaidDifficultyID
 local GetSavedInstanceChatLink = GetSavedInstanceChatLink
 local GetTime = GetTime
 local IsInGroup = IsInGroup
+local IsInInstance = IsInInstance
 local PlaySoundFile = PlaySoundFile
 local SendChatMessage = SendChatMessage
 local UnitClass = UnitClass
