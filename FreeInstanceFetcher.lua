@@ -29,6 +29,7 @@ local select, strmatch, strupper, tinsert, type, wipe = select, strmatch, strupp
 
 -- WoW API / Variables
 local AcceptGroup = AcceptGroup
+local C_PartyInfo_ConfirmInviteUnit = C_PartyInfo.ConfirmInviteUnit
 local CreateFrame = CreateFrame
 local GetDifficultyInfo = GetDifficultyInfo
 local GetGameTime = GetGameTime
@@ -311,7 +312,7 @@ do
         end
 
         if self.useInvite then
-            C_PartyInfo.ConfirmInviteUnit(characterName)
+            C_PartyInfo_ConfirmInviteUnit(characterName)
         else
             if self.dynamic and self.dynamicIndex and data[self.dynamicIndex] then
                 SendChatMessage(self.dynamic, 'WHISPER', nil, characterName)
