@@ -1,4 +1,4 @@
-## Interface: 110002
+## Interface: 110005, 110007
 ## Title: |cff1572cfFree Instance Fetcher|r
 ## Title-zhCN: |cff1572cf便利CD获取|r
 ## Author: @project-author@
