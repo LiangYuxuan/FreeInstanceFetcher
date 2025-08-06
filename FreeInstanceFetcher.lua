@@ -30,6 +30,7 @@ local select, strmatch, strupper, tinsert, type, wipe = select, strmatch, strupp
 
 -- WoW API / Variables
 local AcceptGroup = AcceptGroup
+-- luacheck: globals C_ChatInfo.SendChatMessage
 local C_ChatInfo_SendChatMessage = C_ChatInfo.SendChatMessage
 local C_PartyInfo_ConfirmInviteUnit = C_PartyInfo.ConfirmInviteUnit
 local CreateFrame = CreateFrame
