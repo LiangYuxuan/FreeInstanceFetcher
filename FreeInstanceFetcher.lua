@@ -49,6 +49,7 @@ local UnitClass = UnitClass
 local C_Timer_After = C_Timer.After
 local CooldownFrame_Set = CooldownFrame_Set
 local MenuUtil_CreateContextMenu = MenuUtil.CreateContextMenu
+local StaticPopup_FindVisible = StaticPopup_FindVisible
 local StaticPopup_Hide = StaticPopup_Hide
 
 local DifficultyUtil_ID_Raid10Normal = DifficultyUtil.ID.Raid10Normal
@@ -413,17 +414,10 @@ do
         end
 
         -- ui tweak
-        for i = 1, 4 do
-            local frame = _G['StaticPopup' .. i]
-            if frame:IsVisible() and frame.which == 'PARTY_INVITE' then
-                frame.inviteAccepted = true
-                StaticPopup_Hide('PARTY_INVITE')
-                return
-            elseif frame:IsVisible() and frame.which == 'PARTY_INVITE_XREALM' then
-                frame.inviteAccepted = true
-                StaticPopup_Hide('PARTY_INVITE_XREALM')
-                return
-            end
+        local dialog = StaticPopup_FindVisible('PARTY_INVITE')
+        if dialog then
+            dialog.inviteAccepted = true
+            StaticPopup_Hide('PARTY_INVITE')
         end
     end
 end
