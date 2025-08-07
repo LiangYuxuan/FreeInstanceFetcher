@@ -51,7 +51,7 @@ local C_Timer_After = C_Timer.After
 local CooldownFrame_Set = CooldownFrame_Set
 local MenuUtil_CreateContextMenu = MenuUtil.CreateContextMenu
 local StaticPopup_FindVisible = StaticPopup_FindVisible
-local StaticPopup_Hide = StaticPopup_Hide
+local StaticPopup_OnClick = StaticPopup_OnClick
 
 local DifficultyUtil_ID_Raid10Normal = DifficultyUtil.ID.Raid10Normal
 local DifficultyUtil_ID_Raid10Heroic = DifficultyUtil.ID.Raid10Heroic
@@ -417,8 +417,7 @@ do
         -- ui tweak
         local dialog = StaticPopup_FindVisible('PARTY_INVITE')
         if dialog then
-            dialog.inviteAccepted = true
-            StaticPopup_Hide('PARTY_INVITE')
+            StaticPopup_OnClick(dialog, 1)
         end
     end
 end
