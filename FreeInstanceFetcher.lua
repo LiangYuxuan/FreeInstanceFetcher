@@ -30,8 +30,6 @@ local select, strmatch, strupper, tinsert, type, wipe = select, strmatch, strupp
 
 -- WoW API / Variables
 local AcceptGroup = AcceptGroup
--- luacheck: globals C_ChatInfo.SendChatMessage
-local C_ChatInfo_SendChatMessage = C_ChatInfo.SendChatMessage
 local C_PartyInfo_ConfirmInviteUnit = C_PartyInfo.ConfirmInviteUnit
 local CreateFrame = CreateFrame
 local GetDifficultyInfo = GetDifficultyInfo
@@ -45,6 +43,7 @@ local GetTime = GetTime
 local IsInGroup = IsInGroup
 local IsInInstance = IsInInstance
 local PlaySoundFile = PlaySoundFile
+local SendChatMessage = SendChatMessage
 local UnitClass = UnitClass
 
 local C_Timer_After = C_Timer.After
@@ -98,7 +97,7 @@ local buttons = {
         desc = "发送转英雄命令",
         func = function()
             if IsInGroup(LE_PARTY_CATEGORY_HOME) then
-                C_ChatInfo_SendChatMessage('h', 'PARTY')
+                SendChatMessage('h', 'PARTY')
 
                 if F.db.EnableSound and F.currentSkin and F.currentSkin.sound and F.currentSkin.sound[3] then
                     PlaySoundFile(F.currentSkin.sound[3], 'Master')
@@ -111,7 +110,7 @@ local buttons = {
         desc = "发送转普通命令",
         func = function()
             if IsInGroup(LE_PARTY_CATEGORY_HOME) then
-                C_ChatInfo_SendChatMessage('n', 'PARTY')
+                SendChatMessage('n', 'PARTY')
 
                 if F.db.EnableSound and F.currentSkin and F.currentSkin.sound and F.currentSkin.sound[4] then
                     PlaySoundFile(F.currentSkin.sound[4], 'Master')
@@ -124,7 +123,7 @@ local buttons = {
         desc = "发送转团队命令",
         func = function()
             if IsInGroup(LE_PARTY_CATEGORY_HOME) then
-                C_ChatInfo_SendChatMessage('raid', 'PARTY')
+                SendChatMessage('raid', 'PARTY')
             end
         end,
     },
@@ -133,7 +132,7 @@ local buttons = {
         desc = "发送退组命令",
         func = function()
             if IsInGroup(LE_PARTY_CATEGORY_HOME) then
-                C_ChatInfo_SendChatMessage('leave', 'PARTY')
+                SendChatMessage('leave', 'PARTY')
 
                 if F.db.EnableSound and F.currentSkin and F.currentSkin.sound and F.currentSkin.sound[5] then
                     PlaySoundFile(F.currentSkin.sound[5], 'Master')
@@ -318,9 +317,9 @@ do
             C_PartyInfo_ConfirmInviteUnit(characterName)
         else
             if self.dynamic and self.dynamicIndex and data[self.dynamicIndex] then
-                C_ChatInfo_SendChatMessage(self.dynamic, 'WHISPER', nil, characterName)
+                SendChatMessage(self.dynamic, 'WHISPER', nil, characterName)
             else
-                C_ChatInfo_SendChatMessage(self.index and data[self.index] or data, 'WHISPER', nil, characterName)
+                SendChatMessage(self.index and data[self.index] or data, 'WHISPER', nil, characterName)
             end
         end
 
