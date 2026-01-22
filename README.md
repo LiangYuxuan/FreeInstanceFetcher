@@ -2,7 +2,7 @@
 
 User client to [Free Instance Sharer](https://www.curseforge.com/wow/addons/free-instance-sharer), allowing users to fetch saved lockouts shared by specific character.
 
-[![Build Status](https://github.com/LiangYuxuan/FreeInstanceFetcher/workflows/Build/badge.svg)](https://github.com/LiangYuxuan/FreeInstanceFetcher/actions?workflow=Build)
+[![Build Status](https://github.com/LiangYuxuan/FreeInstanceFetcher/workflows/build/badge.svg)](https://github.com/LiangYuxuan/FreeInstanceFetcher/actions?workflow=build)
 
 ## Introduction
 
