@@ -52526,6 +52526,7 @@ read_globals = {
 	"GetMessageTypeState",
 	"GetMicroIconForRole",
 	"GetMicroIconForRoleEnum",
+	"GetMoneyFrame",
 	"GetMoneyString",
 	"GetMoneyTypeInfoField",
 	"GetNameAndServerNameFromGUID",
