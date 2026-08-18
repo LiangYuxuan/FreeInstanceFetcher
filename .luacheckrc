@@ -59593,7 +59593,6 @@ read_globals = {
 	"ShoppingCartViewCartButtonMixin",
 	"ShoppingCartVisualServices",
 	"ShoppingCartVisualsFrameMixin",
-	"ShouldDisplaySpellCooldown",
 	"ShouldShowArenaParty",
 	"ShouldShowFollowerAbilityBorder",
 	"ShouldShowILevelInFollowerList",
